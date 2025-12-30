@@ -34,19 +34,11 @@ const GameHistory = ({ gameHistory }) => {
     }
   };
 
-  // Open Somnia Testnet Explorer link
-  const openSomniaTestnetExplorer = (txHash) => {
+  // Open Mantle Sepolia Explorer link
+  const openMantleExplorer = (txHash) => {
     if (txHash && txHash !== 'unknown') {
-      const somniaExplorerUrl = `https://shannon-explorer.somnia.network/tx/${txHash}`;
-      window.open(somniaExplorerUrl, '_blank');
-    }
-  };
-
-  // Open ZetaChain Explorer link
-  const openZetaChainExplorer = (txHash) => {
-    if (txHash && txHash !== 'unknown') {
-      const zetaExplorerUrl = `https://testnet.zetascan.com/tx/${txHash}`;
-      window.open(zetaExplorerUrl, '_blank');
+      const mantleExplorerUrl = `https://sepolia.mantlescan.xyz/tx/${txHash}`;
+      window.open(mantleExplorerUrl, '_blank');
     }
   };
   
@@ -144,18 +136,18 @@ const GameHistory = ({ gameHistory }) => {
                       </span>
                     </td>
                     <td className="py-6 px-4">
-                      {item.entropyProof || item.somniaTxHash || item.zetachainTxHash ? (
+                      {item.entropyProof || item.mantleTxHash ? (
                         <div className="text-xs text-gray-300 font-mono">
                           <div className="text-yellow-400 font-bold">{item.entropyProof?.sequenceNumber && item.entropyProof.sequenceNumber !== '0' ? String(item.entropyProof.sequenceNumber) : ''}</div>
                           <div className="flex gap-1 mt-1 flex-wrap">
-                            {item.somniaTxHash && (
+                            {item.mantleTxHash && (
                               <button
-                                onClick={() => openSomniaTestnetExplorer(item.somniaTxHash)}
-                                className="flex items-center gap-1 px-2 py-1 bg-[#8B2398]/10 border border-[#8B2398]/30 rounded text-[#8B2398] text-xs hover:bg-[#8B2398]/20 transition-colors"
-                                title="View on Somnia Testnet Explorer"
+                                onClick={() => openMantleExplorer(item.mantleTxHash)}
+                                className="flex items-center gap-1 px-2 py-1 bg-[#000000]/10 border border-[#000000]/30 rounded text-white text-xs hover:bg-[#000000]/20 transition-colors"
+                                title="View on Mantle Sepolia Explorer"
                               >
                                 <FaExternalLinkAlt size={8} />
-                                Somnia
+                                Mantle
                               </button>
                             )}
                             {item.entropyProof?.arbiscanUrl && (
@@ -177,25 +169,6 @@ const GameHistory = ({ gameHistory }) => {
                                 <FaExternalLinkAlt size={8} />
                                 Entropy
                               </button>
-                            )}
-                            {item.zetachainTxHash && item.zetachainTxHash !== 'pending' && (
-                              <button
-                                onClick={() => openZetaChainExplorer(item.zetachainTxHash)}
-                                className="flex items-center gap-1 px-2 py-1 bg-[#00FF87]/10 border border-[#00FF87]/30 rounded text-[#00FF87] text-xs hover:bg-[#00FF87]/20 transition-colors"
-                                title="View on ZetaChain Universal Explorer"
-                              >
-                                <FaExternalLinkAlt size={8} />
-                                ZetaChain
-                              </button>
-                            )}
-                            {item.zetachainTxHash === 'pending' && (
-                              <div
-                                className="flex items-center gap-1 px-2 py-1 bg-[#FFC107]/10 border border-[#FFC107]/30 rounded text-[#FFC107] text-xs"
-                                title="ZetaChain transaction pending"
-                              >
-                                <div className="w-3 h-3 border-2 border-[#FFC107] border-t-transparent rounded-full animate-spin"></div>
-                                ZetaChain
-                              </div>
                             )}
                           </div>
                         </div>

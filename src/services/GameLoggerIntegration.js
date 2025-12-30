@@ -1,4 +1,4 @@
-import { somniaGameLogger } from './SomniaGameLogger';
+import { mantleGameLogger } from './MantleGameLogger';
 import { ethers } from 'ethers';
 
 /**
@@ -12,7 +12,7 @@ import { ethers } from 'ethers';
  * @param {Object} params - Game logging parameters
  * @returns {Promise<string|null>} Transaction hash or null if logging fails
  */
-export async function logGameToSomnia({
+export async function logGameToMantle({
   gameType,
   playerAddress,
   betAmount,
@@ -57,7 +57,7 @@ export async function logGameToSomnia({
 
     const data = await response.json();
 
-    console.log('✅ Game logged to Somnia:', {
+    console.log('✅ Game logged to Mantle:', {
       gameType,
       txHash: data.txHash,
       explorerUrl: data.explorerUrl
@@ -66,14 +66,17 @@ export async function logGameToSomnia({
     return data.txHash;
 
   } catch (error) {
-    console.error('❌ Failed to log game to Somnia:', error);
+    console.error('❌ Failed to log game to Mantle:', error);
     // Don't throw - logging failure shouldn't break the game
     return null;
   }
 }
 
+// Legacy function for backwards compatibility
+export const logGameToSomnia = logGameToMantle;
+
 /**
- * Get player's game history from Somnia
+ * Get player's game history from Mantle
  * @param {string} playerAddress - Player's address
  * @param {number} limit - Maximum number of games to fetch
  * @param {Object} provider - Ethers provider
@@ -87,10 +90,10 @@ export async function getPlayerGameHistory(playerAddress, limit = 50, provider =
 
     // Initialize logger with provider if provided
     if (provider) {
-      somniaGameLogger.setProviderAndSigner(provider, null);
+      mantleGameLogger.setProviderAndSigner(provider, null);
     }
 
-    const history = await somniaGameLogger.getGameHistory(playerAddress, limit);
+    const history = await mantleGameLogger.getGameHistory(playerAddress, limit);
     
     return history;
 
@@ -114,10 +117,10 @@ export async function getPlayerGameCount(playerAddress, provider = null) {
 
     // Initialize logger with provider if provided
     if (provider) {
-      somniaGameLogger.setProviderAndSigner(provider, null);
+      mantleGameLogger.setProviderAndSigner(provider, null);
     }
 
-    const count = await somniaGameLogger.getPlayerGameCount(playerAddress);
+    const count = await mantleGameLogger.getPlayerGameCount(playerAddress);
     
     return count;
 
@@ -136,10 +139,10 @@ export async function getGameLoggerStats(provider = null) {
   try {
     // Initialize logger with provider if provided
     if (provider) {
-      somniaGameLogger.setProviderAndSigner(provider, null);
+      mantleGameLogger.setProviderAndSigner(provider, null);
     }
 
-    const stats = await somniaGameLogger.getStats();
+    const stats = await mantleGameLogger.getStats();
     
     return stats;
 
@@ -169,10 +172,10 @@ export function subscribeToGameResults(callback, provider = null) {
   try {
     // Initialize logger with provider if provided
     if (provider) {
-      somniaGameLogger.setProviderAndSigner(provider, null);
+      mantleGameLogger.setProviderAndSigner(provider, null);
     }
 
-    return somniaGameLogger.onGameResultLogged(callback);
+    return mantleGameLogger.onGameResultLogged(callback);
 
   } catch (error) {
     console.error('❌ Failed to subscribe to game results:', error);
@@ -186,11 +189,12 @@ export function subscribeToGameResults(callback, provider = null) {
  * @returns {string} Explorer URL
  */
 export function getTransactionExplorerUrl(txHash) {
-  return somniaGameLogger.getTransactionUrl(txHash);
+  return mantleGameLogger.getTransactionUrl(txHash);
 }
 
 export default {
-  logGameToSomnia,
+  logGameToMantle,
+  logGameToSomnia, // Legacy alias
   getPlayerGameHistory,
   getPlayerGameCount,
   getGameLoggerStats,

@@ -1105,8 +1105,8 @@ export default function GameRoulette() {
                       <FaCoins className="text-yellow-400" />
                     </div>
                     <div className="text-xs text-white/50 font-sans text-center">Volume</div>
-                    <div className="text-white font-display text-sm md:text-base truncate w-full text-center" title={`${gameStatistics.totalVolume} STT`}>
-                      {gameStatistics.totalVolume} STT
+                    <div className="text-white font-display text-sm md:text-base truncate w-full text-center" title={`${gameStatistics.totalVolume} MNT`}>
+                      {gameStatistics.totalVolume} MNT
                     </div>
                   </div>
 
@@ -1115,8 +1115,8 @@ export default function GameRoulette() {
                       <FaTrophy className="text-yellow-500" />
                     </div>
                     <div className="text-xs text-white/50 font-sans text-center">Max Win</div>
-                    <div className="text-white font-display text-sm md:text-base truncate w-full text-center" title={`${gameStatistics.maxWin} STT`}>
-                      {gameStatistics.maxWin} STT
+                    <div className="text-white font-display text-sm md:text-base truncate w-full text-center" title={`${gameStatistics.maxWin} MNT`}>
+                      {gameStatistics.maxWin} MNT
                     </div>
                   </div>
                 </motion.div>
@@ -1203,7 +1203,7 @@ export default function GameRoulette() {
   // Mantle Game Logger
   const { logGame, isLogging, getExplorerUrl } = useMantleGameLogger();
 
-  // Function to fetch real STT balance will be defined after useSelector
+  // Function to fetch real MNT balance will be defined after useSelector
 
   // Sound refs
   const spinSoundRef = useRef(null);
@@ -1370,7 +1370,7 @@ export default function GameRoulette() {
   const dispatch = useDispatch();
   const { userBalance, isLoading: isLoadingBalance } = useSelector((state) => state.balance);
 
-  // Function to fetch real STT balance
+  // Function to fetch real MNT balance
   const fetchRealBalance = useCallback(async () => {
     if (!account?.address) return;
 
@@ -1611,11 +1611,11 @@ export default function GameRoulette() {
     }
 
     // Check Redux balance instead of wallet
-    const currentBalance = parseFloat(userBalance || '0'); // Balance is already in STT
+    const currentBalance = parseFloat(userBalance || '0'); // Balance is already in MNT
     const totalBetAmount = total;
 
     if (currentBalance < totalBetAmount) {
-      alert(`Insufficient balance. You have ${currentBalance.toFixed(5)} STT but need ${totalBetAmount.toFixed(5)} STT`);
+      alert(`Insufficient balance. You have ${currentBalance.toFixed(5)} MNT but need ${totalBetAmount.toFixed(5)} MNT`);
       return;
     }
 
@@ -1637,7 +1637,7 @@ export default function GameRoulette() {
       
       // Check if user has enough balance
       if (originalBalance < totalBetAmount) {
-        alert(`Insufficient balance. You have ${originalBalance.toFixed(5)} STT but need ${totalBetAmount.toFixed(5)} STT`);
+        alert(`Insufficient balance. You have ${originalBalance.toFixed(5)} MNT but need ${totalBetAmount.toFixed(5)} MNT`);
         setSubmitDisabled(false);
         setWheelSpinning(false);
         return;
@@ -2646,7 +2646,7 @@ export default function GameRoulette() {
               }}
             >
               <FaCoins className="text-yellow-400" />
-              Balance: {isConnected ? `${parseFloat(userBalance || '0').toFixed(5)} STT` : 'Connect Wallet'}
+              Balance: {isConnected ? `${parseFloat(userBalance || '0').toFixed(5)} MNT` : 'Connect Wallet'}
             </Typography>
           </Box>
 
@@ -3200,7 +3200,7 @@ export default function GameRoulette() {
               />
 
               <Typography color="white" sx={{ opacity: 0.8 }}>
-                Current Bet Total: {total.toFixed(5)} STT
+                Current Bet Total: {total.toFixed(5)} MNT
               </Typography>
 
               {/* Quick Bet Buttons */}
@@ -3285,7 +3285,7 @@ export default function GameRoulette() {
                       loading={submitDisabled}
                       onClick={lockBet}
                     >
-                      {total > 0 ? `Place Bet (${total.toFixed(5)} STT)` : 'Place Bet (STT)'}
+                      {total > 0 ? `Place Bet (${total.toFixed(5)} MNT)` : 'Place Bet (MNT)'}
                     </Button>
                     {submitDisabled && rollResult < 0 && (
                       <Typography color="white" sx={{ opacity: 0.8 }}>
@@ -3627,9 +3627,9 @@ export default function GameRoulette() {
             {notificationIndex === notificationSteps.RESULT_READY && (
               <Typography>
                 {winnings > 0
-                  ? `🎉 You won ${winnings.toFixed(4)} STT!`
+                  ? `🎉 You won ${winnings.toFixed(4)} MNT!`
                   : winnings < 0
-                  ? `💸 You lost ${Math.abs(winnings).toFixed(4)} STT!`
+                  ? `💸 You lost ${Math.abs(winnings).toFixed(4)} MNT!`
                   : "🤝 Break even!"}
               </Typography>
             )}

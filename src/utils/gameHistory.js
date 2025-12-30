@@ -370,7 +370,7 @@ export const getEtherscanUrl = (transactionHash, network = 'sepolia') => {
 };
 
 /**
- * Format STT amount for display
+ * Format MNT amount for display
  * @param {string|number} amount - Amount in wei
  * @param {number} decimals - Number of decimal places
  * @returns {string} Formatted amount

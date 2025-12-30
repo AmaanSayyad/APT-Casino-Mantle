@@ -132,7 +132,6 @@ export async function POST(request) {
         const tx = await treasuryWallet.sendTransaction({
           to: formattedUserAddress,
           value: amountWei,
-          gasLimit: 100000
         });
         
         console.log(`📤 Transaction sent: ${tx.hash}`);
@@ -157,10 +156,54 @@ export async function POST(request) {
 
     console.log('💸 Calling emergencyWithdraw on Treasury Contract...');
     
+    // Estimate gas first
+    let gasEstimate;
+    try {
+      gasEstimate = await treasuryContract.emergencyWithdraw.estimateGas(
+        formattedUserAddress,
+        amountWei
+      );
+      console.log(`⛽ Estimated gas: ${gasEstimate.toString()}`);
+    } catch (estimateError) {
+      console.log('⚠️ Gas estimation failed, contract may revert:', estimateError.message);
+      
+      // Fallback to direct wallet transfer
+      console.log('💸 Falling back to direct wallet transfer...');
+      const walletBalance = await provider.getBalance(treasuryWallet.address);
+      
+      if (walletBalance < amountWei) {
+        return NextResponse.json(
+          { error: `Treasury wallet has insufficient funds. Balance: ${ethers.formatEther(walletBalance)} MNT` },
+          { status: 400 }
+        );
+      }
+      
+      const tx = await treasuryWallet.sendTransaction({
+        to: formattedUserAddress,
+        value: amountWei,
+      });
+      
+      console.log(`📤 Direct transfer sent: ${tx.hash}`);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        transactionHash: tx.hash,
+        amount: amount,
+        userAddress: userAddress,
+        treasuryAddress: treasuryWallet.address,
+        status: 'pending',
+        message: 'Transaction sent via direct transfer.',
+        note: 'Used direct wallet transfer (contract call failed)'
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    
     const tx = await treasuryContract.emergencyWithdraw(
       formattedUserAddress,
       amountWei,
-      { gasLimit: 500000 }
+      { gasLimit: gasEstimate * BigInt(120) / BigInt(100) } // Add 20% buffer
     );
 
     console.log(`📤 Transaction sent: ${tx.hash}`);

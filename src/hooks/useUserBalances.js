@@ -1,16 +1,16 @@
 "use client";
 import { useState, useEffect } from 'react';
 
-// Mock data for Ethereum testnet
+// Mock data for Mantle testnet
 const MOCK_BALANCES = {
   native: {
-    symbol: 'STT',
+    symbol: 'MNT',
     formatted: '25.1234',
     value: '25123400000000000000000',
     decimals: 18
   },
   eth: {
-    symbol: 'STT',
+    symbol: 'MNT',
     formatted: '500.00',
     value: '500000000000000000000000',
     decimals: 18

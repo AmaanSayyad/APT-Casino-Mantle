@@ -532,36 +532,38 @@ export default function Navbar() {
       const amountWei = BigInt(Math.floor(amount * 1e18)).toString();
       const amountHex = '0x' + BigInt(amountWei).toString(16);
       
-      // Treasury contract deposit() function signature
-      const depositFunctionSignature = '0xd0e30db0'; // deposit()
+      console.log('💰 Deposit details:', {
+        treasury: TREASURY_ADDRESS,
+        from: userAccount,
+        amountMNT: amount,
+        amountWei: amountWei,
+        amountHex: amountHex
+      });
       
-      // Get current gas price from the network
-      let gasPrice;
-      try {
-        gasPrice = await window.ethereum.request({ method: 'eth_gasPrice' });
-        console.log('Current gas price:', gasPrice);
-      } catch (gasPriceError) {
-        console.log('Could not get gas price, using default');
-        gasPrice = '0x3B9ACA00'; // 1 Gwei default
-      }
-      
-      // Send transaction to treasury contract
+      // Simple MNT transfer to treasury - let MetaMask estimate gas
       const transactionParameters = {
         to: TREASURY_ADDRESS,
         from: userAccount,
         value: amountHex,
-        data: depositFunctionSignature,
-        gas: '0x1E8480', // 2000000 gas limit (increased for Mantle contract calls)
-        gasPrice: gasPrice,
       };
       
-      console.log('Sending deposit transaction to Treasury:', transactionParameters);
+      console.log('📤 Sending deposit transaction to Treasury:', transactionParameters);
       
       // Request transaction from MetaMask
-      const txHash = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [transactionParameters],
-      });
+      let txHash;
+      try {
+        txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [transactionParameters],
+        });
+      } catch (txError) {
+        console.error('❌ Transaction error details:', {
+          code: txError.code,
+          message: txError.message,
+          data: txError.data
+        });
+        throw txError;
+      }
       
       console.log('Transaction sent:', txHash);
       

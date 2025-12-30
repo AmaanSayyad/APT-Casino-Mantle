@@ -37,13 +37,13 @@ const GameHistoryCard = ({ game, gameType }) => {
   };
 
   const openTransaction = (txHash, logIndex) => {
-    const network = process.env.NEXT_PUBLIC_NETWORK || 'somnia-testnet-testnet';
+    const network = process.env.NEXT_PUBLIC_NETWORK || 'mantle-sepolia';
     let explorerUrl;
     
-    if (network === 'somnia-testnet-testnet') {
-      explorerUrl = `https://shannon-explorer.somnia.network/tx/${txHash}#eventlog`;
+    if (network === 'mantle-sepolia') {
+      explorerUrl = `https://sepolia.mantlescan.xyz/tx/${txHash}#eventlog`;
     } else {
-      explorerUrl = `https://shannon-explorer.somnia.network/tx/${txHash}#eventlog`;
+      explorerUrl = `https://sepolia.mantlescan.xyz/tx/${txHash}#eventlog`;
     }
     
     window.open(explorerUrl, '_blank');
@@ -137,7 +137,7 @@ const GameHistoryCard = ({ game, gameType }) => {
                 Bet Amount:
               </Typography>
               <Typography variant="body1" sx={{ color: 'white', fontWeight: 'bold' }}>
-                {game.betAmount} STT
+                {game.betAmount} MNT
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -145,7 +145,7 @@ const GameHistoryCard = ({ game, gameType }) => {
                 Payout:
               </Typography>
               <Typography variant="body1" sx={{ color: 'white', fontWeight: 'bold' }}>
-                {game.payout || '0'} STT
+                {game.payout || '0'} MNT
               </Typography>
             </Grid>
           </Grid>
@@ -201,12 +201,12 @@ const GameHistoryCard = ({ game, gameType }) => {
                 Links:
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                {game?.entropyProof?.somnia-testnetExplorerUrl && (
+                {game?.entropyProof?.mantleExplorerUrl && (
                   <Button
                     size="small"
                     variant="outlined"
                     startIcon={<ExternalLink size={12} />}
-                    onClick={() => window.open(game.entropyProof.somnia-testnetExplorerUrl, '_blank')}
+                    onClick={() => window.open(game.entropyProof.mantleExplorerUrl, '_blank')}
                     sx={{
                       color: '#8B2398',
                       borderColor: '#8B2398',
@@ -215,7 +215,7 @@ const GameHistoryCard = ({ game, gameType }) => {
                       px: 1
                     }}
                   >
-                    Somnia Testnet
+                    Mantle
                   </Button>
                 )}
                 {entropyTransactionHash && (

@@ -99,7 +99,7 @@ const AppLayout = ({ children }) => {
                 <span className="font-medium">Provably Fair Gaming</span>
               </div>
               <p className="text-sm">
-                All games use Pyth Entropy for verifiable randomness on Somnia Testnet Network
+                All games use Pyth Entropy for verifiable randomness on Mantle Network
               </p>
             </div>
           </div>
