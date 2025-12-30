@@ -3,15 +3,14 @@
 /**
  * Global Notification System for Game Results
  * 
- * Displays real-time notifications for game results across all connected clients
- * via Somnia Data Streams integration.
+ * Displays real-time notifications for game results across all connected clients.
+ * Updated for Mantle Sepolia network.
  * 
  * Requirements: 5.2, 5.3, 5.4, 5.5
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { useSomniaStreams } from '../hooks/useSomniaStreams';
 import { formatEther } from 'viem';
 
 /**
@@ -58,7 +57,7 @@ const formatAddress = (address) => {
 };
 
 /**
- * Format amount in STT
+ * Format amount in MNT
  */
 const formatAmount = (amount) => {
   try {
@@ -138,13 +137,13 @@ const GameResultNotification = ({ notification, onDismiss }) => {
                 <div>
                   <span className="text-white/60">Bet:</span>
                   <span className="text-white font-semibold ml-1">
-                    {formatAmount(betAmount)} STT
+                    {formatAmount(betAmount)} MNT
                   </span>
                 </div>
                 <div>
                   <span className="text-white/60">Payout:</span>
                   <span className="text-white font-semibold ml-1">
-                    {formatAmount(payout)} STT
+                    {formatAmount(payout)} MNT
                   </span>
                 </div>
               </div>
@@ -152,7 +151,7 @@ const GameResultNotification = ({ notification, onDismiss }) => {
               {isWin && (
                 <div className="mt-1">
                   <span className="text-green-200 text-xs font-bold">
-                    +{formatAmount(profit.toString())} STT
+                    +{formatAmount(profit.toString())} MNT
                   </span>
                 </div>
               )}
@@ -232,62 +231,19 @@ const NotificationsContainer = ({ notifications, onDismiss }) => {
 };
 
 /**
- * Connection Status Indicator
- */
-const ConnectionStatus = ({ isConnected, reconnectionStatus }) => {
-  const [isMounted, setIsMounted] = useState(false);
-  
-  useEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
-  }, []);
-  
-  if (!isMounted || typeof window === 'undefined') return null;
-  
-  // Don't show if connected and not reconnecting
-  if (isConnected && !reconnectionStatus.isReconnecting) return null;
-  
-  return createPortal(
-    <div className="fixed bottom-4 right-4 z-[9999]">
-      <div className={`
-        px-4 py-2 rounded-lg shadow-lg border backdrop-blur-md
-        ${isConnected 
-          ? 'bg-yellow-600/90 border-yellow-400' 
-          : 'bg-red-600/90 border-red-400'
-        }
-      `}>
-        <div className="flex items-center space-x-2">
-          <div className={`
-            w-2 h-2 rounded-full animate-pulse
-            ${isConnected ? 'bg-yellow-200' : 'bg-red-200'}
-          `}></div>
-          <span className="text-white text-sm font-medium">
-            {reconnectionStatus.isReconnecting 
-              ? `Reconnecting... (${reconnectionStatus.attempts}/${reconnectionStatus.maxAttempts})`
-              : 'Connecting to live feed...'
-            }
-          </span>
-        </div>
-      </div>
-    </div>,
-    document.body
-  );
-};
-
-/**
  * Global Notification System Component
  * 
- * Main component that manages the notification queue and integrates with Somnia Data Streams
+ * Main component that manages the notification queue.
+ * Note: Real-time streaming removed - notifications are now triggered locally.
  */
 export function GlobalNotificationSystem() {
   const [notifications, setNotifications] = useState([]);
-  const [showConnectionStatus, setShowConnectionStatus] = useState(true);
   
   /**
-   * Handle incoming game result events
+   * Add a notification to the queue (can be called from other components)
    */
-  const handleGameResult = useCallback((gameResult) => {
-    console.log('🎰 New game result notification received:', {
+  const addNotification = useCallback((gameResult) => {
+    console.log('🎰 New game result notification:', {
       player: gameResult.player,
       gameType: gameResult.gameType,
       betAmount: gameResult.betAmount,
@@ -320,68 +276,23 @@ export function GlobalNotificationSystem() {
   }, []);
   
   /**
-   * Handle errors from Somnia Streams
-   */
-  const handleError = useCallback((error) => {
-    console.error('❌ Somnia Streams error:', error);
-  }, []);
-  
-  /**
-   * Initialize Somnia Streams subscription
-   */
-  const {
-    isConnected,
-    isInitialized,
-    error,
-    reconnectionStatus
-  } = useSomniaStreams({
-    onGameResult: handleGameResult,
-    onError: handleError,
-    autoConnect: true
-  });
-  
-  /**
    * Dismiss a notification
    */
   const dismissNotification = useCallback((id) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
   
-  /**
-   * Hide connection status after successful connection
-   */
+  // Expose addNotification globally for other components to use
   useEffect(() => {
-    if (isConnected && !reconnectionStatus.isReconnecting) {
-      const timer = setTimeout(() => {
-        setShowConnectionStatus(false);
-      }, 3000);
-      
-      return () => clearTimeout(timer);
-    } else {
-      setShowConnectionStatus(true);
+    if (typeof window !== 'undefined') {
+      window.addGameNotification = addNotification;
     }
-  }, [isConnected, reconnectionStatus.isReconnecting]);
-  
-  /**
-   * Log connection status changes
-   */
-  useEffect(() => {
-    if (isInitialized) {
-      console.log('✅ Global Notification System initialized');
-    }
-  }, [isInitialized]);
-  
-  useEffect(() => {
-    if (isConnected) {
-      console.log('✅ Global Notification System connected to live feed');
-    }
-  }, [isConnected]);
-  
-  useEffect(() => {
-    if (error) {
-      console.error('❌ Global Notification System error:', error);
-    }
-  }, [error]);
+    return () => {
+      if (typeof window !== 'undefined') {
+        delete window.addGameNotification;
+      }
+    };
+  }, [addNotification]);
   
   return (
     <>
@@ -390,17 +301,8 @@ export function GlobalNotificationSystem() {
         notifications={notifications}
         onDismiss={dismissNotification}
       />
-      
-      {/* Connection status indicator */}
-      {showConnectionStatus && (
-        <ConnectionStatus 
-          isConnected={isConnected}
-          reconnectionStatus={reconnectionStatus}
-        />
-      )}
     </>
   );
 }
 
 export default GlobalNotificationSystem;
-

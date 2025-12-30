@@ -35,8 +35,7 @@ import { useAccount } from 'wagmi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBalance, setLoading, loadBalanceFromStorage } from '@/store/balanceSlice';
 import pythEntropyService from '@/services/PythEntropyService';
-import { useSomniaGameLogger } from '@/hooks/useSomniaGameLogger';
-import { isZetaChainConfigured } from '@/config/zetachainConfig';
+import { useMantleGameLogger } from '@/hooks/useMantleGameLogger';
 
 // Ethereum client functions will be added here when needed
 
@@ -44,7 +43,7 @@ import { isZetaChainConfigured } from '@/config/zetachainConfig';
 const CASINO_MODULE_ADDRESS = process.env.NEXT_PUBLIC_CASINO_MODULE_ADDRESS || "0x0000000000000000000000000000000000000000";
 
 const parseMONAmount = (amount) => {
-  // Parse STT amount
+  // Parse MNT amount
   return parseFloat(amount);
 };
 
@@ -1191,11 +1190,6 @@ export default function GameRoulette() {
   const [isMuted, setIsMuted] = useState(false);
   const [bettingHistory, setBettingHistory] = useState([]);
   const [error, setError] = useState(null);
-  
-  // ZetaChain logging state
-  const [isZetaChainLogging, setIsZetaChainLogging] = useState(false);
-  const [zetaChainError, setZetaChainError] = useState(null);
-  const [zetaChainEnabled, setZetaChainEnabled] = useState(false);
 
   // Ethereum wallet
   const { address, isConnected } = useAccount();
@@ -1206,8 +1200,8 @@ export default function GameRoulette() {
   const { balance } = useToken(address); // Keep for compatibility
   const HOUSE_ADDR = CASINO_MODULE_ADDRESS;
   
-  // Somnia Game Logger
-  const { logGame, isLogging, getExplorerUrl } = useSomniaGameLogger();
+  // Mantle Game Logger
+  const { logGame, isLogging, getExplorerUrl } = useMantleGameLogger();
 
   // Function to fetch real STT balance will be defined after useSelector
 
@@ -1400,35 +1394,6 @@ export default function GameRoulette() {
       fetchRealBalance();
     }
   }, [account?.address, fetchRealBalance]);
-
-  // Check ZetaChain availability (backend handles signing)
-  useEffect(() => {
-    const checkZetaChain = async () => {
-      try {
-        // Check if ZetaChain is configured
-        if (!isZetaChainConfigured()) {
-          console.log('⚠️ ZetaChain not configured');
-          setZetaChainEnabled(false);
-          return;
-        }
-
-        // Check if wallet is connected (we need player address)
-        if (!isConnected || !address) {
-          setZetaChainEnabled(false);
-          return;
-        }
-
-        // ZetaChain is available (backend will handle signing)
-        setZetaChainEnabled(true);
-        console.log('✅ ZetaChain logging available for Roulette (backend signing)');
-      } catch (error) {
-        console.error('❌ Failed to check ZetaChain availability:', error);
-        setZetaChainEnabled(false);
-      }
-    };
-
-    checkZetaChain();
-  }, [isConnected, address]);
 
   // insert into events
   const insertEvent = (type, oldVal, newVal, ind = 0) => {
@@ -2100,81 +2065,19 @@ export default function GameRoulette() {
             }
           }).then(txHash => {
             if (txHash) {
-              console.log('✅ Roulette game logged to Somnia:', getExplorerUrl(txHash));
-              // Update betting history with Somnia transaction hash
+              console.log('✅ Roulette game logged to Mantle:', getExplorerUrl(txHash));
+              // Update betting history with Mantle transaction hash
               setBettingHistory(prev => {
                 const updatedHistory = [...prev];
                 if (updatedHistory.length > 0) {
-                  updatedHistory[0] = { ...updatedHistory[0], somniaTxHash: txHash };
+                  updatedHistory[0] = { ...updatedHistory[0], mantleTxHash: txHash };
                 }
                 return updatedHistory;
               });
             }
           }).catch(error => {
-            console.warn('⚠️ Failed to log Roulette game to Somnia:', error);
+            console.warn('⚠️ Failed to log Roulette game to Mantle:', error);
           });
-          
-          // Log game result to ZetaChain via backend API (optional, non-blocking)
-          if (zetaChainEnabled) {
-            setIsZetaChainLogging(true);
-            setZetaChainError(null);
-            
-            // Send to backend API for ZetaChain logging
-            fetch('/api/zetachain/log-game', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                gameType: 'ROULETTE',
-                playerAddress: address,
-                betAmount: totalBetAmount.toString(),
-                result: {
-                  winningNumber: winningNumber,
-                  bets: allBets,
-                  winningBets: winningBets,
-                  losingBets: losingBets,
-                  totalPayout: totalPayout,
-                  netResult: netResult
-                },
-                payout: Math.max(0, netResult).toString(),
-                entropyProof: {
-                  requestId: entropyResult.entropyProof.requestId,
-                  transactionHash: entropyResult.entropyProof.transactionHash
-                }
-              })
-            })
-            .then(async (response) => {
-              if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Backend error: ${errorText}`);
-              }
-              return response.json();
-            })
-            .then(data => {
-              if (data.success && data.txHash) {
-                console.log('✅ Roulette game logged to ZetaChain:', data.explorerUrl);
-                // Update betting history with ZetaChain transaction hash
-                setBettingHistory(prev => {
-                  const updatedHistory = [...prev];
-                  if (updatedHistory.length > 0) {
-                    updatedHistory[0] = { ...updatedHistory[0], zetachainTxHash: data.txHash };
-                  }
-                  return updatedHistory;
-                });
-              }
-              setIsZetaChainLogging(false);
-            })
-            .catch(error => {
-              console.warn('⚠️ Failed to log Roulette game to ZetaChain:', error);
-              setZetaChainError(error.message || 'Failed to log to ZetaChain');
-              setIsZetaChainLogging(false);
-              
-              // Show error notification but don't block game
-              setSnackbarMessage(`ZetaChain logging failed: ${error.message || 'Unknown error'}`);
-              setSnackbarOpen(true);
-            });
-          } else {
-            console.log('ℹ️ ZetaChain logging disabled or not configured');
-          }
           
           // Fire-and-forget explorer log via casino wallet
           try {
@@ -2223,16 +2126,16 @@ export default function GameRoulette() {
         // Show result notification
         if (netResult > 0) {
           const winMessage = winningBets.length === 1
-                    ? `🎉 WINNER! ${winningBets[0].name} - You won ${(netResult - totalBetAmount).toFixed(5)} STT!`
-                    : `🎉 MULTIPLE WINNERS! ${winningBets.length} bets won - Total: ${(netResult - totalBetAmount).toFixed(5)} STT!`;
+                    ? `🎉 WINNER! ${winningBets[0].name} - You won ${(netResult - totalBetAmount).toFixed(5)} MNT!`
+                    : `🎉 MULTIPLE WINNERS! ${winningBets.length} bets won - Total: ${(netResult - totalBetAmount).toFixed(5)} MNT!`;
 
           setNotificationMessage(winMessage);
           setNotificationSeverity("success");
           setSnackbarMessage(winMessage);
         } else {
-          setNotificationMessage(`💸 Number ${winningNumber} - You lost ${totalBetAmount.toFixed(5)} STT!`);
+          setNotificationMessage(`💸 Number ${winningNumber} - You lost ${totalBetAmount.toFixed(5)} MNT!`);
           setNotificationSeverity("error");
-          setSnackbarMessage(`💸 Number ${winningNumber} - You lost ${totalBetAmount.toFixed(5)} STT!`);
+          setSnackbarMessage(`💸 Number ${winningNumber} - You lost ${totalBetAmount.toFixed(5)} MNT!`);
         }
         setSnackbarOpen(true);
 
@@ -3401,28 +3304,6 @@ export default function GameRoulette() {
                             : `1 bet selected`;
                         })()}
                       </Typography>
-                    )}
-                    
-                    {/* ZetaChain logging status indicator */}
-                    {zetaChainEnabled && (
-                      <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                        {isZetaChainLogging ? (
-                          <>
-                            <CircularProgress size={16} sx={{ color: 'primary.main' }} />
-                            <Typography variant="caption" color="primary.main">
-                              Logging to ZetaChain...
-                            </Typography>
-                          </>
-                        ) : zetaChainError ? (
-                          <Typography variant="caption" color="error.main" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            ⚠️ ZetaChain: {zetaChainError}
-                          </Typography>
-                        ) : (
-                          <Typography variant="caption" color="success.main" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            ✓ ZetaChain logging enabled
-                          </Typography>
-                        )}
-                      </Box>
                     )}
                   </Box>
                 )}

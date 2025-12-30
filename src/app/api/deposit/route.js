@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
-import { SOMNIA_CONTRACTS, SOMNIA_NETWORKS } from '@/config/contracts';
+import { TREASURY_CONFIG } from '@/config/treasury';
 
 /**
- * Deposit API - Somnia Testnet
+ * Deposit API - Mantle Sepolia Testnet
  * 
  * NETWORK ARCHITECTURE:
- * This API processes deposits on Somnia Testnet using STT tokens.
- * Validates: Requirements 2.3, 12.1
+ * This API processes deposits on Mantle Sepolia Testnet using MNT tokens.
+ * Validates: Requirements 6.1, 6.2, 6.4
  */
 
-// Somnia Testnet Treasury address from config
-const SOMNIA_TREASURY_ADDRESS = SOMNIA_CONTRACTS[SOMNIA_NETWORKS.TESTNET].treasury;
+// Mantle Sepolia Treasury address from config
+const MANTLE_TREASURY_ADDRESS = TREASURY_CONFIG.ADDRESS;
 
 export async function POST(request) {
   try {
@@ -27,28 +27,27 @@ export async function POST(request) {
     }
 
     // In a real implementation, you would:
-    // 1. Verify the transaction on Ethereum blockchain
+    // 1. Verify the transaction on Mantle blockchain
     // 2. Check if the transaction is confirmed
     // 3. Verify the amount matches
     // 4. Update the user's balance in your database
     
-    // For now, we'll simulate a successful deposit
     const mockDepositId = 'deposit_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     
-    console.log(`🏦 Processing deposit: ${amount} STT from ${userAddress}`);
-    console.log(`📍 Treasury: ${SOMNIA_TREASURY_ADDRESS}`);
+    console.log(`🏦 Processing deposit: ${amount} MNT from ${userAddress}`);
+    console.log(`📍 Treasury: ${MANTLE_TREASURY_ADDRESS}`);
     
     // Simulate processing delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    console.log(`✅ Deposit successful: ${amount} STT from ${userAddress}`);
+    console.log(`✅ Deposit successful: ${amount} MNT from ${userAddress}`);
     
     return NextResponse.json({
       success: true,
       depositId: mockDepositId,
       amount: amount,
       userAddress: userAddress,
-      treasuryAddress: SOMNIA_TREASURY_ADDRESS,
+      treasuryAddress: MANTLE_TREASURY_ADDRESS,
       status: 'confirmed',
       timestamp: new Date().toISOString()
     });
@@ -81,18 +80,18 @@ export async function GET(request) {
         id: 'deposit_1',
         amount: '0.5',
         userAddress: userAddress,
-        treasuryAddress: SOMNIA_TREASURY_ADDRESS,
+        treasuryAddress: MANTLE_TREASURY_ADDRESS,
         status: 'confirmed',
-        timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+        timestamp: new Date(Date.now() - 86400000).toISOString(),
         transactionHash: '0x' + Math.random().toString(16).substr(2, 64)
       },
       {
         id: 'deposit_2',
         amount: '1.0',
         userAddress: userAddress,
-        treasuryAddress: SOMNIA_TREASURY_ADDRESS,
+        treasuryAddress: MANTLE_TREASURY_ADDRESS,
         status: 'confirmed',
-        timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+        timestamp: new Date(Date.now() - 172800000).toISOString(),
         transactionHash: '0x' + Math.random().toString(16).substr(2, 64)
       }
     ];

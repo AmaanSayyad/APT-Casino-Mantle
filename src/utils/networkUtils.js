@@ -1,28 +1,31 @@
-// Network utilities for Somnia Testnet
-import { somniaTestnet } from '@/config/chains';
+// Network utilities for Mantle Sepolia
+import { mantleSepolia } from '@/config/chains';
 
-export const SOMNIA_TESTNET_CONFIG = {
-  chainId: '0xc488', // 50312 in hex
-  chainName: 'Somnia Testnet',
+export const MANTLE_SEPOLIA_CONFIG = {
+  chainId: '0x138B', // 5003 in hex
+  chainName: 'Mantle Sepolia Testnet',
   nativeCurrency: {
-    name: 'Somnia Testnet',
-    symbol: 'STT',
+    name: 'Mantle',
+    symbol: 'MNT',
     decimals: 18,
   },
-  rpcUrls: ['https://dream-rpc.somnia.network'],
-  blockExplorerUrls: ['https://shannon-explorer.somnia.network'],
+  rpcUrls: ['https://rpc.sepolia.mantle.xyz'],
+  blockExplorerUrls: ['https://sepolia.mantlescan.xyz'],
 };
 
-export const switchToSomniaTestnet = async () => {
+// Legacy config for backwards compatibility
+export const SOMNIA_TESTNET_CONFIG = MANTLE_SEPOLIA_CONFIG;
+
+export const switchToMantleSepolia = async () => {
   if (!window.ethereum) {
     throw new Error('MetaMask is not installed');
   }
 
   try {
-    // Try to switch to Somnia Testnet
+    // Try to switch to Mantle Sepolia
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: SOMNIA_TESTNET_CONFIG.chainId }],
+      params: [{ chainId: MANTLE_SEPOLIA_CONFIG.chainId }],
     });
   } catch (switchError) {
     // If the chain is not added, add it
@@ -30,26 +33,38 @@ export const switchToSomniaTestnet = async () => {
       try {
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
-          params: [SOMNIA_TESTNET_CONFIG],
+          params: [MANTLE_SEPOLIA_CONFIG],
         });
       } catch (addError) {
-        throw new Error('Failed to add Somnia Testnet to MetaMask');
+        throw new Error('Failed to add Mantle Sepolia to MetaMask');
       }
     } else {
-      throw new Error('Failed to switch to Somnia Testnet');
+      throw new Error('Failed to switch to Mantle Sepolia');
     }
   }
 };
 
-export const isSomniaTestnet = (chainId) => {
-  return chainId === 50312 || chainId === '0xc488';
+// Legacy function for backwards compatibility
+export const switchToSomniaTestnet = switchToMantleSepolia;
+
+export const isMantleSepolia = (chainId) => {
+  return chainId === 5003 || chainId === '0x138B';
 };
 
-export const formatMonBalance = (balance, decimals = 5) => {
+// Legacy function for backwards compatibility
+export const isSomniaTestnet = isMantleSepolia;
+
+export const formatMNTBalance = (balance, decimals = 5) => {
   const numBalance = parseFloat(balance || '0');
-  return `${numBalance.toFixed(decimals)} STT`;
+  return `${numBalance.toFixed(decimals)} MNT`;
 };
 
-export const getSomniaTestnetExplorerUrl = (txHash) => {
-  return `https://shannon-explorer.somnia.network/tx/${txHash}`;
+// Legacy function for backwards compatibility
+export const formatMonBalance = formatMNTBalance;
+
+export const getMantleSepoliaExplorerUrl = (txHash) => {
+  return `https://sepolia.mantlescan.xyz/tx/${txHash}`;
 };
+
+// Legacy function for backwards compatibility
+export const getSomniaTestnetExplorerUrl = getMantleSepoliaExplorerUrl;

@@ -1,20 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useAccount, useWalletClient, usePublicClient } from 'wagmi';
 import { ethers } from 'ethers';
-import { 
-  logGameToSomnia, 
-  getPlayerGameHistory, 
-  getPlayerGameCount,
-  getGameLoggerStats,
-  subscribeToGameResults,
-  getTransactionExplorerUrl
-} from '../services/GameLoggerIntegration';
+import { MantleGameLogger } from '../services/MantleGameLogger';
+import { getMantleExplorerTxUrl } from '../config/mantleTestnetConfig';
 
 /**
- * React hook for Somnia Game Logger
- * Provides easy access to game logging functionality
+ * React hook for Mantle Game Logger
+ * Provides easy access to game logging functionality on Mantle Sepolia
  */
-export function useSomniaGameLogger() {
+export function useMantleGameLogger() {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -44,7 +38,7 @@ export function useSomniaGameLogger() {
   }, [publicClient, walletClient, isConnected]);
 
   /**
-   * Log a game result to Somnia Testnet
+   * Log a game result to Mantle Sepolia Testnet
    */
   const logGame = useCallback(async ({
     gameType,
@@ -68,22 +62,22 @@ export function useSomniaGameLogger() {
         throw new Error('Signer not available');
       }
 
-      const txHash = await logGameToSomnia({
+      const logger = new MantleGameLogger(provider, signer);
+
+      const txHash = await logger.logGameResult({
         gameType,
         playerAddress: address,
         betAmount,
         result,
         payout,
-        entropyProof,
-        provider,
-        signer
+        entropyProof
       });
 
       setLastLogTxHash(txHash);
       return txHash;
 
     } catch (err) {
-      console.error('Failed to log game:', err);
+      console.error('Failed to log game to Mantle:', err);
       setError(err.message);
       return null;
     } finally {
@@ -92,7 +86,7 @@ export function useSomniaGameLogger() {
   }, [address, isConnected, getEthersProviderAndSigner]);
 
   /**
-   * Get player's game history
+   * Get player's game history from Mantle
    */
   const getHistory = useCallback(async (limit = 50) => {
     if (!address) {
@@ -101,9 +95,10 @@ export function useSomniaGameLogger() {
 
     try {
       const { provider } = await getEthersProviderAndSigner();
-      return await getPlayerGameHistory(address, limit, provider);
+      const logger = new MantleGameLogger(provider, null);
+      return await logger.getGameHistory(address, limit);
     } catch (err) {
-      console.error('Failed to get history:', err);
+      console.error('Failed to get history from Mantle:', err);
       return [];
     }
   }, [address, getEthersProviderAndSigner]);
@@ -118,7 +113,8 @@ export function useSomniaGameLogger() {
 
     try {
       const { provider } = await getEthersProviderAndSigner();
-      return await getPlayerGameCount(address, provider);
+      const logger = new MantleGameLogger(provider, null);
+      return await logger.getPlayerGameCount(address);
     } catch (err) {
       console.error('Failed to get game count:', err);
       return 0;
@@ -131,7 +127,8 @@ export function useSomniaGameLogger() {
   const getStats = useCallback(async () => {
     try {
       const { provider } = await getEthersProviderAndSigner();
-      return await getGameLoggerStats(provider);
+      const logger = new MantleGameLogger(provider, null);
+      return await logger.getStats();
     } catch (err) {
       console.error('Failed to get stats:', err);
       return null;
@@ -145,7 +142,8 @@ export function useSomniaGameLogger() {
     const setupSubscription = async () => {
       try {
         const { provider } = await getEthersProviderAndSigner();
-        return subscribeToGameResults(callback, provider);
+        const logger = new MantleGameLogger(provider, null);
+        return logger.onGameResultLogged(callback);
       } catch (err) {
         console.error('Failed to subscribe to events:', err);
         return () => {};
@@ -164,7 +162,7 @@ export function useSomniaGameLogger() {
    * Get transaction explorer URL
    */
   const getExplorerUrl = useCallback((txHash) => {
-    return getTransactionExplorerUrl(txHash);
+    return getMantleExplorerTxUrl(txHash);
   }, []);
 
   return {
@@ -185,5 +183,4 @@ export function useSomniaGameLogger() {
   };
 }
 
-export default useSomniaGameLogger;
-
+export default useMantleGameLogger;

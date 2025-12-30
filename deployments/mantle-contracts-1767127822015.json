@@ -1,0 +1,12 @@
+{
+  "network": "mantle-sepolia",
+  "chainId": "5003",
+  "deployer": "0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123",
+  "deploymentTime": "2025-12-30T20:50:05.887Z",
+  "contracts": {
+    "gameLogger": {
+      "address": "0xDC6c0cEaB793A562EB7bacE45c006D2b47D03e62",
+      "transactionHash": "0x4a83e53e080c04bfa009d143c705133efeb5305916a7d1f46b7ae2f1bf47c735"
+    }
+  }
+}

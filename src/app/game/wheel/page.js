@@ -20,8 +20,7 @@ import useWalletStatus from '@/hooks/useWalletStatus';
 // import VRFProofRequiredModal from '@/components/VRF/VRFProofRequiredModal';
 // import vrfLogger from '@/services/VRFLoggingService';
 import pythEntropyService from '@/services/PythEntropyService';
-import { useSomniaGameLogger } from '@/hooks/useSomniaGameLogger';
-import { isZetaChainConfigured } from '@/config/zetachainConfig';
+import { useMantleGameLogger } from '@/hooks/useMantleGameLogger';
 
 // Import new components
 import WheelVideo from "./components/WheelVideo";
@@ -56,13 +55,12 @@ export default function Home() {
   const notification = useNotification();
   const { isConnected, address } = useWalletStatus();
   
-  // Somnia Game Logger
-  const { logGame, isLogging, getExplorerUrl } = useSomniaGameLogger();
+  // Mantle Game Logger
+  const { logGame, isLogging, getExplorerUrl } = useMantleGameLogger();
   
-  // ZetaChain logging state
-  const [isZetaChainLogging, setIsZetaChainLogging] = useState(false);
-  const [zetaChainError, setZetaChainError] = useState(null);
-  const [zetaChainEnabled, setZetaChainEnabled] = useState(false);
+  // Mantle logging state (simplified - no ZetaChain)
+  const [isMantleLogging, setIsMantleLogging] = useState(false);
+  const [mantleError, setMantleError] = useState(null);
   
   // Use ref to prevent infinite loop in useEffect
   const isInitialized = useRef(false);
@@ -83,35 +81,6 @@ export default function Home() {
     
     isInitialized.current = true; // Mark as initialized
   }, []); // Empty dependency array since we use ref
-
-  // Check ZetaChain availability (backend handles signing)
-  useEffect(() => {
-    const checkZetaChain = async () => {
-      try {
-        // Check if ZetaChain is configured
-        if (!isZetaChainConfigured()) {
-          console.log('⚠️ ZetaChain not configured');
-          setZetaChainEnabled(false);
-          return;
-        }
-
-        // Check if wallet is connected (we need player address)
-        if (!isConnected || !address) {
-          setZetaChainEnabled(false);
-          return;
-        }
-
-        // ZetaChain is available (backend will handle signing)
-        setZetaChainEnabled(true);
-        console.log('✅ ZetaChain logging available for Wheel (backend signing)');
-      } catch (error) {
-        console.error('❌ Failed to check ZetaChain availability:', error);
-        setZetaChainEnabled(false);
-      }
-    };
-
-    checkZetaChain();
-  }, [isConnected, address]);
 
   // Scroll to section function
   const scrollToSection = (sectionId) => {
@@ -165,7 +134,7 @@ export default function Home() {
           : item
       ));
       
-      // Log game result to Somnia Testnet (non-blocking)
+      // Log game result to Mantle Sepolia (non-blocking)
       logGame({
         gameType: 'WHEEL',
         betAmount: betAmount.toString(),
@@ -181,82 +150,17 @@ export default function Home() {
         }
       }).then(txHash => {
         if (txHash) {
-          console.log('✅ Wheel game logged to Somnia:', getExplorerUrl(txHash));
-          // Update game history with Somnia transaction hash
+          console.log('✅ Wheel game logged to Mantle:', getExplorerUrl(txHash));
+          // Update game history with Mantle transaction hash
           setGameHistory(prev => prev.map(item => 
             item.id === historyItemId 
-              ? { ...item, somniaTxHash: txHash }
+              ? { ...item, mantleTxHash: txHash }
               : item
           ));
         }
       }).catch(error => {
-        console.warn('⚠️ Failed to log Wheel game to Somnia:', error);
+        console.warn('⚠️ Failed to log Wheel game to Mantle:', error);
       });
-      
-      // Log game result to ZetaChain via backend API (optional, non-blocking)
-      console.log('🔍 ZetaChain enabled status:', zetaChainEnabled, 'Address:', address, 'Connected:', isConnected);
-      if (zetaChainEnabled) {
-        console.log('🚀 Starting ZetaChain logging...');
-        setIsZetaChainLogging(true);
-        setZetaChainError(null);
-        
-        // Send to backend API for ZetaChain logging
-        fetch('/api/zetachain/log-game', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            gameType: 'WHEEL',
-            playerAddress: address,
-            betAmount: betAmount.toString(),
-            result: {
-              winningSegment: historyItemId,
-              multiplier: actualMultiplier,
-              color: detectedColor
-            },
-            payout: winAmount.toString(),
-            entropyProof: {
-              requestId: entropyResult.entropyProof.requestId,
-              transactionHash: entropyResult.entropyProof.transactionHash
-            }
-          })
-        })
-        .then(async (response) => {
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Backend error: ${errorText}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.success && data.txHash) {
-            console.log('✅ Wheel game logged to ZetaChain:', data.explorerUrl);
-            console.log('🔍 Updating history item with ID:', historyItemId, 'with txHash:', data.txHash);
-            // Update game history with ZetaChain transaction hash
-            setGameHistory(prev => {
-              console.log('📋 Current history before update:', prev);
-              const updated = prev.map(item => {
-                if (item.id === historyItemId) {
-                  console.log('✏️ Found matching item, updating with zetachainTxHash:', data.txHash);
-                  return { ...item, zetachainTxHash: data.txHash };
-                }
-                return item;
-              });
-              console.log('📋 Updated history:', updated);
-              return updated;
-            });
-          } else {
-            console.warn('⚠️ ZetaChain response missing success or txHash:', data);
-          }
-          setIsZetaChainLogging(false);
-        })
-        .catch(error => {
-          console.warn('⚠️ Failed to log Wheel game to ZetaChain:', error);
-          setZetaChainError(error.message || 'Failed to log to ZetaChain');
-          setIsZetaChainLogging(false);
-        });
-      } else {
-        console.log('ℹ️ ZetaChain logging disabled or not configured');
-      }
       
       // Log on-chain via casino wallet (non-blocking)
       try {
@@ -284,11 +188,11 @@ export default function Home() {
     }
   };
 
-    // Check Redux balance (balance is already in STT)
+    // Check Redux balance (balance is already in MNT)
     const currentBalance = parseFloat(userBalance || '0');
     
     if (currentBalance < betAmount) {
-      alert(`Insufficient balance. You have ${currentBalance.toFixed(5)} STT but need ${betAmount} STT`);
+      alert(`Insufficient balance. You have ${currentBalance.toFixed(5)} MNT but need ${betAmount} MNT`);
       return;
     }
 
@@ -305,7 +209,7 @@ export default function Home() {
       const newBalance = (parseFloat(userBalance || '0') - betAmount).toString();
       dispatch(setBalance(newBalance));
       
-      console.log('balance STT');
+      console.log('balance MNT');
       
       // Set up callback to handle wheel animation completion
       window.wheelBetCallback = async (landedMultiplier) => {
@@ -370,7 +274,7 @@ export default function Home() {
           
           // Show result and update balance immediately
           if (actualMultiplier > 0) {
-            notification.success(`Congratulations! ${betAmount} STT × ${actualMultiplier.toFixed(2)} = ${winAmount.toFixed(5)} STT won!`);
+            notification.success(`Congratulations! ${betAmount} MNT × ${actualMultiplier.toFixed(2)} = ${winAmount.toFixed(5)} MNT won!`);
             
             // Update balance with winnings
             const currentBalance = parseFloat(userBalance || '0');
@@ -465,7 +369,7 @@ export default function Home() {
       });
       
       if (currentBalance < currentBet) {
-        alert(`Insufficient balance for bet ${i + 1}. Need ${currentBet.toFixed(5)} STT but have ${currentBalance.toFixed(5)} STT`);
+        alert(`Insufficient balance for bet ${i + 1}. Need ${currentBet.toFixed(5)} MNT but have ${currentBalance.toFixed(5)} MNT`);
         break;
       }
 
@@ -568,7 +472,7 @@ export default function Home() {
       
       // Show notification for win
       if (actualMultiplier > 0) {
-        notification.success(`Congratulations! ${currentBet} STT × ${actualMultiplier.toFixed(2)} = ${winAmount.toFixed(8)} STT won!`);
+        notification.success(`Congratulations! ${currentBet} MNT × ${actualMultiplier.toFixed(2)} = ${winAmount.toFixed(8)} MNT won!`);
       }
 
       // Store history entry
@@ -640,8 +544,8 @@ export default function Home() {
     // Sample statistics
     const gameStatistics = {
       totalBets: '1,856,342',
-      totalVolume: '8.3M STT',
-      maxWin: '243,500 STT'
+      totalVolume: '8.3M MNT',
+      maxWin: '243,500 MNT'
     };
     
     return (

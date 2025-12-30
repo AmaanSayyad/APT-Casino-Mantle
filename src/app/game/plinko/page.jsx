@@ -14,8 +14,7 @@ import { Typography } from "@mui/material";
 import { GiRollingDices, GiCardRandom, GiPokerHand } from "react-icons/gi";
 import { FaPercentage, FaBalanceScale, FaChartLine, FaCoins, FaTrophy, FaPlay, FaExternalLinkAlt } from "react-icons/fa";
 import pythEntropyService from '../../../services/PythEntropyService';
-import { useSomniaGameLogger } from '@/hooks/useSomniaGameLogger';
-import { isZetaChainConfigured } from '@/config/zetachainConfig';
+import { useMantleGameLogger } from '@/hooks/useMantleGameLogger';
 import useWalletStatus from '@/hooks/useWalletStatus';
 
 export default function Plinko() {
@@ -29,16 +28,11 @@ export default function Plinko() {
 
   const plinkoGameRef = useRef(null);
   
-  // Somnia Game Logger
-  const { logGame, isLogging, getExplorerUrl } = useSomniaGameLogger();
+  // Mantle Game Logger
+  const { logGame, isLogging, getExplorerUrl } = useMantleGameLogger();
   
   // Wallet status
   const { isConnected, address } = useWalletStatus();
-  
-  // ZetaChain logging state
-  const [isZetaChainLogging, setIsZetaChainLogging] = useState(false);
-  const [zetaChainError, setZetaChainError] = useState(null);
-  const [zetaChainEnabled, setZetaChainEnabled] = useState(false);
 
   // Smooth scroll helper
   const scrollToElement = (elementId) => {
@@ -61,48 +55,12 @@ export default function Plinko() {
     }
   }, []);
 
-  // Check ZetaChain availability (backend handles signing)
-  useEffect(() => {
-    const checkZetaChain = async () => {
-      try {
-        console.log('🔍 Plinko - Checking ZetaChain availability...', {
-          isZetaChainConfigured: isZetaChainConfigured(),
-          isConnected,
-          address
-        });
-        
-        // Check if ZetaChain is configured
-        if (!isZetaChainConfigured()) {
-          console.log('⚠️ Plinko - ZetaChain not configured');
-          setZetaChainEnabled(false);
-          return;
-        }
-
-        // Check if wallet is connected (we need player address)
-        if (!isConnected || !address) {
-          console.log('⚠️ Plinko - Wallet not connected or no address', { isConnected, address });
-          setZetaChainEnabled(false);
-          return;
-        }
-
-        // ZetaChain is available (backend will handle signing)
-        setZetaChainEnabled(true);
-        console.log('✅ Plinko - ZetaChain logging available (backend signing)', { address });
-      } catch (error) {
-        console.error('❌ Plinko - Failed to check ZetaChain availability:', error);
-        setZetaChainEnabled(false);
-      }
-    };
-
-    checkZetaChain();
-  }, [isConnected, address]);
-
   // Header component adapted from Roulette header
   const PlinkoHeader = () => {
     const gameStatistics = {
       totalBets: '1,234,567',
-      totalVolume: '5.2M STT',
-      maxWin: '120,000 STT'
+      totalVolume: '5.2M MNT',
+      maxWin: '120,000 MNT'
     };
     return (
       <div className="relative text-white px-4 md:px-8 lg:px-20 mb-8 pt-28 md:pt-32 lg:pt-36 mt-6">
@@ -274,7 +232,7 @@ export default function Plinko() {
       console.log('📝 Enhanced bet result:', enhancedBetResult);
       setGameHistory(prev => [enhancedBetResult, ...prev].slice(0, 100)); // Keep up to last 100 entries
       
-      // Log game result to Somnia Testnet (non-blocking)
+      // Log game result to Mantle Sepolia Testnet (non-blocking)
       logGame({
         gameType: 'PLINKO',
         betAmount: (newBetResult.betAmount || 0).toString(),
@@ -290,89 +248,19 @@ export default function Plinko() {
         }
       }).then(txHash => {
         if (txHash) {
-          console.log('✅ Plinko game logged to Somnia:', getExplorerUrl(txHash));
-          // Update game history with Somnia transaction hash
+          console.log('✅ Plinko game logged to Mantle:', getExplorerUrl(txHash));
+          // Update game history with Mantle transaction hash
           setGameHistory(prev => {
             const updatedHistory = [...prev];
             if (updatedHistory.length > 0) {
-              updatedHistory[0] = { ...updatedHistory[0], somniaTxHash: txHash };
+              updatedHistory[0] = { ...updatedHistory[0], mantleTxHash: txHash };
             }
             return updatedHistory;
           });
         }
       }).catch(error => {
-        console.warn('⚠️ Failed to log Plinko game to Somnia:', error);
+        console.warn('⚠️ Failed to log Plinko game to Mantle:', error);
       });
-      
-      // Log game result to ZetaChain via backend API (optional, non-blocking)
-      // Check conditions directly instead of relying on state (timing issue)
-      const shouldLogToZetaChain = isZetaChainConfigured() && isConnected && address;
-      
-      if (shouldLogToZetaChain) {
-        console.log('🔗 Starting ZetaChain logging for Plinko...', {
-          isZetaChainConfigured: isZetaChainConfigured(),
-          isConnected,
-          address,
-          betAmount: newBetResult.betAmount
-        });
-        
-        setIsZetaChainLogging(true);
-        setZetaChainError(null);
-        
-        // Send to backend API for ZetaChain logging
-        fetch('/api/zetachain/log-game', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            gameType: 'PLINKO',
-            playerAddress: address,
-            betAmount: (newBetResult.betAmount || 0).toString(),
-            result: {
-              path: newBetResult.path || [],
-              finalBucket: newBetResult.bucket || 0,
-              multiplier: newBetResult.multiplier || 0
-            },
-            payout: (newBetResult.payout || 0).toString(),
-            entropyProof: {
-              requestId: randomData.entropyProof.requestId,
-              transactionHash: randomData.entropyProof.transactionHash
-            }
-          })
-        })
-        .then(async (response) => {
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Backend error: ${errorText}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.success && data.txHash) {
-            console.log('✅ Plinko game logged to ZetaChain:', data.explorerUrl);
-            // Update game history with ZetaChain transaction hash
-            setGameHistory(prev => {
-              const updatedHistory = [...prev];
-              if (updatedHistory.length > 0) {
-                updatedHistory[0] = { ...updatedHistory[0], zetachainTxHash: data.txHash };
-              }
-              return updatedHistory;
-            });
-          }
-          setIsZetaChainLogging(false);
-        })
-        .catch(error => {
-          console.warn('⚠️ Failed to log Plinko game to ZetaChain:', error);
-          setZetaChainError(error.message || 'Failed to log to ZetaChain');
-          setIsZetaChainLogging(false);
-        });
-      } else {
-        console.log('ℹ️ ZetaChain logging disabled or not configured', {
-          shouldLogToZetaChain,
-          isZetaChainConfigured: isZetaChainConfigured(),
-          isConnected,
-          address
-        });
-      }
       
     } catch (error) {
       console.error('❌ Error using Pyth Entropy for Plinko game:', error);
@@ -431,9 +319,6 @@ export default function Plinko() {
               onBetAmountChange={handleBetAmountChange}
               initialRows={currentRows}
               initialRiskLevel={currentRiskLevel}
-              zetaChainEnabled={zetaChainEnabled}
-              isZetaChainLogging={isZetaChainLogging}
-              zetaChainError={zetaChainError}
             />
           </div>
 

@@ -4,11 +4,12 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @title SomniaGameLogger
- * @dev Contract for logging game results on Somnia Testnet
+ * @title MantleGameLogger
+ * @dev Contract for logging game results on Mantle Sepolia Testnet
  * Supports Roulette, Mines, Wheel, and Plinko games
+ * Pyth Entropy is used on Arbitrum Sepolia for randomness
  */
-contract SomniaGameLogger is Ownable {
+contract MantleGameLogger is Ownable {
     event GameResultLogged(
         bytes32 indexed logId,
         address indexed player,
@@ -51,7 +52,7 @@ contract SomniaGameLogger is Ownable {
     
     // Game type counters for analytics
     mapping(GameType => uint256) public gameTypeCounts;
-    
+
     // Total stats
     uint256 public totalGamesLogged;
     uint256 public totalBetAmount;
@@ -73,9 +74,9 @@ contract SomniaGameLogger is Ownable {
     /**
      * @dev Log a game result
      * @param gameType Type of game (ROULETTE, MINES, WHEEL, PLINKO)
-     * @param betAmount Bet amount in wei
+     * @param betAmount Bet amount in wei (MNT)
      * @param resultData Encoded game result data
-     * @param payout Payout amount in wei
+     * @param payout Payout amount in wei (MNT)
      * @param entropyRequestId Pyth Entropy request ID from Arbitrum Sepolia
      * @param entropyTxHash Arbitrum Sepolia transaction hash for entropy
      * @return logId Unique identifier for this game log
@@ -122,7 +123,7 @@ contract SomniaGameLogger is Ownable {
         totalBetAmount += betAmount;
         totalPayoutAmount += payout;
 
-        // Emit event for Somnia Data Streams
+        // Emit event
         emit GameResultLogged(
             logId,
             msg.sender,
@@ -171,6 +172,7 @@ contract SomniaGameLogger is Ownable {
         return recentLogs;
     }
 
+
     /**
      * @dev Get logs by game type
      * @param gameType Game type to filter by
@@ -178,7 +180,6 @@ contract SomniaGameLogger is Ownable {
      * @return Array of log IDs
      */
     function getLogsByGameType(GameType gameType, uint256 limit) external view returns (bytes32[] memory) {
-        // Count matching logs
         uint256 count = 0;
         for (uint256 i = 0; i < allLogIds.length; i++) {
             if (gameLogs[allLogIds[i]].gameType == gameType) {
@@ -187,7 +188,6 @@ contract SomniaGameLogger is Ownable {
             }
         }
         
-        // Create result array
         bytes32[] memory result = new bytes32[](count);
         uint256 index = 0;
         
@@ -203,13 +203,6 @@ contract SomniaGameLogger is Ownable {
 
     /**
      * @dev Get contract statistics
-     * @return totalGames Total games logged
-     * @return totalBets Total bet amount
-     * @return totalPayouts Total payout amount
-     * @return rouletteCount Roulette games count
-     * @return minesCount Mines games count
-     * @return wheelCount Wheel games count
-     * @return plinkoCount Plinko games count
      */
     function getStats() external view returns (
         uint256 totalGames,
@@ -233,7 +226,6 @@ contract SomniaGameLogger is Ownable {
 
     /**
      * @dev Add authorized logger (only owner)
-     * @param logger Address to authorize
      */
     function addAuthorizedLogger(address logger) external onlyOwner {
         require(logger != address(0), "Invalid logger address");
@@ -242,7 +234,6 @@ contract SomniaGameLogger is Ownable {
 
     /**
      * @dev Remove authorized logger (only owner)
-     * @param logger Address to remove authorization
      */
     function removeAuthorizedLogger(address logger) external onlyOwner {
         authorizedLoggers[logger] = false;
@@ -250,8 +241,6 @@ contract SomniaGameLogger is Ownable {
 
     /**
      * @dev Check if address is authorized logger
-     * @param logger Address to check
-     * @return True if authorized
      */
     function isAuthorizedLogger(address logger) external view returns (bool) {
         return authorizedLoggers[logger] || logger == owner();
@@ -259,7 +248,6 @@ contract SomniaGameLogger is Ownable {
 
     /**
      * @dev Get total number of logs
-     * @return Total log count
      */
     function getTotalLogs() external view returns (uint256) {
         return allLogIds.length;
@@ -267,8 +255,6 @@ contract SomniaGameLogger is Ownable {
 
     /**
      * @dev Get player's total games
-     * @param player Player address
-     * @return Total games played by player
      */
     function getPlayerGameCount(address player) external view returns (uint256) {
         return playerLogs[player].length;

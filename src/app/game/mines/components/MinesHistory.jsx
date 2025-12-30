@@ -11,10 +11,10 @@ const MinesHistory = ({ gameHistory = [], userStats = {} }) => {
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
 
-  // Open Somnia Testnet Explorer link for transaction hash
-  const openSomniaTestnetExplorer = (hash) => {
+  // Open Mantle Sepolia Explorer link for transaction hash
+  const openMantleExplorer = (hash) => {
     if (hash && hash !== 'unknown') {
-      const explorerUrl = `https://shannon-explorer.somnia.network/tx/${hash}`;
+      const explorerUrl = `https://sepolia.mantlescan.xyz/tx/${hash}`;
       window.open(explorerUrl, '_blank');
     }
   };
@@ -24,14 +24,6 @@ const MinesHistory = ({ gameHistory = [], userStats = {} }) => {
     if (txHash) {
       const entropyExplorerUrl = `https://entropy-explorer.pyth.network/?chain=arbitrum-sepolia&search=${txHash}`;
       window.open(entropyExplorerUrl, '_blank');
-    }
-  };
-
-  // Open ZetaChain Explorer link
-  const openZetaChainExplorer = (txHash) => {
-    if (txHash && txHash !== 'unknown') {
-      const zetaExplorerUrl = `https://testnet.zetascan.com/tx/${txHash}`;
-      window.open(zetaExplorerUrl, '_blank');
     }
   };
   
@@ -316,20 +308,20 @@ const MinesHistory = ({ gameHistory = [], userStats = {} }) => {
                 <span>{game.time}</span>
               </div>
               <div className="text-white/70 flex items-center justify-center">
-                {game.entropyProof || game.somniaTxHash || game.zetachainTxHash ? (
+                {game.entropyProof || game.mantleTxHash ? (
                   <div className="flex flex-col gap-1 items-center">
                     <div className="text-xs text-gray-300 font-mono text-center">
                       <div className="text-yellow-400 font-bold">{game.entropyProof?.sequenceNumber && game.entropyProof.sequenceNumber !== '0' ? String(game.entropyProof.sequenceNumber) : ''}</div>
                     </div>
                     <div className="flex gap-1 flex-wrap justify-center">
-                      {game.somniaTxHash && (
+                      {game.mantleTxHash && (
                         <button
-                          onClick={() => openSomniaTestnetExplorer(game.somniaTxHash)}
-                          className="flex items-center gap-1 px-2 py-1 bg-[#8B2398]/10 border border-[#8B2398]/30 rounded text-[#8B2398] text-xs hover:bg-[#8B2398]/20 transition-colors"
-                          title="View on Somnia Testnet Explorer"
+                          onClick={() => openMantleExplorer(game.mantleTxHash)}
+                          className="flex items-center gap-1 px-2 py-1 bg-[#0A0A0A]/10 border border-[#65B3AE]/30 rounded text-[#65B3AE] text-xs hover:bg-[#65B3AE]/20 transition-colors"
+                          title="View on Mantle Sepolia Explorer"
                         >
                           <FaExternalLinkAlt size={8} />
-                          Somnia
+                          Mantle
                         </button>
                       )}
                       {game.entropyProof?.transactionHash && (
@@ -341,25 +333,6 @@ const MinesHistory = ({ gameHistory = [], userStats = {} }) => {
                           <FaExternalLinkAlt size={8} />
                           Entropy
                         </button>
-                      )}
-                      {game.zetachainTxHash && game.zetachainTxHash !== 'pending' && (
-                        <button
-                          onClick={() => openZetaChainExplorer(game.zetachainTxHash)}
-                          className="flex items-center gap-1 px-2 py-1 bg-[#00FF87]/10 border border-[#00FF87]/30 rounded text-[#00FF87] text-xs hover:bg-[#00FF87]/20 transition-colors"
-                          title="View on ZetaChain Universal Explorer"
-                        >
-                          <FaExternalLinkAlt size={8} />
-                          ZetaChain
-                        </button>
-                      )}
-                      {game.zetachainTxHash === 'pending' && (
-                        <div
-                          className="flex items-center gap-1 px-2 py-1 bg-[#FFC107]/10 border border-[#FFC107]/30 rounded text-[#FFC107] text-xs"
-                          title="ZetaChain transaction pending"
-                        >
-                          <div className="w-3 h-3 border-2 border-[#FFC107] border-t-transparent rounded-full animate-spin"></div>
-                          ZetaChain
-                        </div>
                       )}
                     </div>
                   </div>

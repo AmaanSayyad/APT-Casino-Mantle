@@ -1,10 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ChevronDown, ChevronUp, Minus, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useSelector } from 'react-redux';
 import useWalletStatus from '@/hooks/useWalletStatus';
-import pythEntropyService from '@/services/PythEntropyService';
-import { CircularProgress } from "@mui/material";
 
 export default function GameControls({ 
   onBet, 
@@ -12,10 +10,7 @@ export default function GameControls({
   onRiskLevelChange, 
   onBetAmountChange, 
   initialRows = 16, 
-  initialRiskLevel = "Medium",
-  zetaChainEnabled = false,
-  isZetaChainLogging = false,
-  zetaChainError = null
+  initialRiskLevel = "Medium"
 }) {
   const userBalance = useSelector((state) => state.balance.userBalance);
   const { isConnected } = useWalletStatus();
@@ -141,12 +136,12 @@ export default function GameControls({
     console.log('handleBet called with betValue:', betValue, 'currentBalance (ETH):', currentBalance);
     
     if (betValue < 0.001) {
-      alert("Minimum bet amount is 0.001 STT");
+      alert("Minimum bet amount is 0.001 MNT");
       return;
     }
     
     if (betValue > currentBalance) {
-      alert(`Insufficient balance! You have ${currentBalance.toFixed(5)} STT but need ${betValue} STT`);
+      alert(`Insufficient balance! You have ${currentBalance.toFixed(5)} MNT but need ${betValue} MNT`);
       return;
     }
     
@@ -200,7 +195,7 @@ export default function GameControls({
     });
     
     if (totalBetAmount > currentBalance) {
-      alert(`Insufficient balance for ${totalBets} bets of ${betAmount} STT each. You need ${totalBetAmount.toFixed(3)} STT but have ${currentBalance.toFixed(5)} STT`);
+      alert(`Insufficient balance for ${totalBets} bets of ${betAmount} MNT each. You need ${totalBetAmount.toFixed(3)} MNT but have ${currentBalance.toFixed(5)} MNT`);
       setIsAutoPlaying(false);
       return;
     }
@@ -348,7 +343,7 @@ export default function GameControls({
     return totalBetAmount <= currentBalance && betValue >= 0.001;
   };
 
-  // Get current balance in STT for display
+  // Get current balance in MNT for display
   const getCurrentBalanceInMON = () => {
     return parseFloat(userBalance || '0').toFixed(5);
   };
@@ -388,7 +383,7 @@ export default function GameControls({
           Bet Amount
         </label>
         <div className="mb-2">
-          <span className="text-2xl font-bold text-white">{betAmount} STT</span>
+          <span className="text-2xl font-bold text-white">{betAmount} MNT</span>
         </div>
         <div className="relative">
           <input
@@ -444,37 +439,37 @@ export default function GameControls({
             onClick={() => handleBetAmountChange(0.001)}
             className="bg-[#2A0025] border border-[#333947] rounded-lg py-2 text-xs text-white hover:bg-[#3A0035] transition-colors"
           >
-            0.001 STT
+            0.001 MNT
           </button>
           <button
             onClick={() => handleBetAmountChange(0.01)}
             className="bg-[#2A0025] border border-[#333947] rounded-lg py-2 text-xs text-white hover:bg-[#3A0035] transition-colors"
           >
-            0.01 STT
+            0.01 MNT
           </button>
           <button
             onClick={() => handleBetAmountChange(0.1)}
             className="bg-[#2A0025] border border-[#333947] rounded-lg py-2 text-xs text-white hover:bg-[#3A0035] transition-colors"
           >
-            0.1 STT
+            0.1 MNT
           </button>
           <button
             onClick={() => handleBetAmountChange(1)}
             className="bg-[#2A0025] border border-[#333947] rounded-lg py-2 text-xs text-white hover:bg-[#3A0035] transition-colors"
           >
-            1.0 STT
+            1.0 MNT
           </button>
           <button
             onClick={() => handleBetAmountChange(5)}
             className="bg-[#2A0025] border border-[#333947] rounded-lg py-2 text-xs text-white hover:bg-[#3A0035] transition-colors"
           >
-            5.0 STT
+            5.0 MNT
           </button>
           <button
             onClick={() => handleBetAmountChange(10)}
             className="bg-[#2A0025] border border-[#333947] rounded-lg py-2 text-xs text-white hover:bg-[#3A0035] transition-colors"
           >
-            10.0 STT
+            10.0 MNT
           </button>
         </div>
       </div>
@@ -579,7 +574,7 @@ export default function GameControls({
           <div className="text-center p-3 bg-[#2A0025] rounded-lg border border-[#333947]">
             <span className="text-sm text-gray-400">Current Balance:</span>
             {isConnected ? (
-              <div className="text-lg font-bold text-green-400">{getCurrentBalanceInMON()} STT</div>
+              <div className="text-lg font-bold text-green-400">{getCurrentBalanceInMON()} MNT</div>
             ) : (
               <div className="text-lg font-bold text-red-400">Connect Wallet</div>
             )}
@@ -602,35 +597,9 @@ export default function GameControls({
           {((gameMode === "auto" && !hasSufficientBalanceForAutoBet()) || (!gameMode === "auto" && !hasSufficientBalance())) && parseFloat(betAmount) > 0 && (
             <div className="text-center text-red-400 text-sm">
               {gameMode === "auto" 
-                ? `Insufficient balance STT each` 
-                : `Insufficient balance STT bet`
+                ? `Insufficient balance MNT each` 
+                : `Insufficient balance MNT bet`
               }
-            </div>
-          )}
-          
-          {/* ZetaChain logging status indicator */}
-          {zetaChainEnabled && (
-            <div className="mt-3 p-3 bg-[#2A0025] rounded-lg border border-[#333947]">
-              {isZetaChainLogging ? (
-                <div className="flex items-center justify-center gap-2">
-                  <CircularProgress size={16} sx={{ color: '#a855f7' }} />
-                  <span className="text-sm text-purple-400">
-                    Logging to ZetaChain...
-                  </span>
-                </div>
-              ) : zetaChainError ? (
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-sm text-red-400">
-                    ⚠️ ZetaChain: {zetaChainError}
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-sm text-green-400">
-                    ✓ ZetaChain logging enabled
-                  </span>
-                </div>
-              )}
             </div>
           )}
         </div>

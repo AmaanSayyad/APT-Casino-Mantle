@@ -5,6 +5,11 @@ export const ARBITRUM_NETWORKS = {
   DEVNET: 'arbitrum-devnet'
 };
 
+export const MANTLE_NETWORKS = {
+  SEPOLIA: 'mantle-sepolia',
+};
+
+// Legacy - kept for backwards compatibility
 export const SOMNIA_NETWORKS = {
   TESTNET: 'somnia-testnet',
 };
@@ -39,15 +44,33 @@ export const SOMNIA_EXPLORER_URLS = {
   [SOMNIA_NETWORKS.TESTNET]: "https://shannon-explorer.somnia.network",
 };
 
-// Default network (can be changed via environment variable)
-export const DEFAULT_NETWORK = SOMNIA_NETWORKS.TESTNET;
+// Mantle Network URLs
+export const MANTLE_NETWORK_URLS = {
+  [MANTLE_NETWORKS.SEPOLIA]: "https://rpc.sepolia.mantle.xyz",
+};
 
-// Somnia Contract Addresses
+// Mantle Explorer URLs
+export const MANTLE_EXPLORER_URLS = {
+  [MANTLE_NETWORKS.SEPOLIA]: "https://sepolia.mantlescan.xyz",
+};
+
+// Default network - now using Mantle Sepolia
+export const DEFAULT_NETWORK = MANTLE_NETWORKS.SEPOLIA;
+
+// Somnia Contract Addresses (Legacy - deprecated)
 export const SOMNIA_CONTRACTS = {
   [SOMNIA_NETWORKS.TESTNET]: {
     treasury: process.env.NEXT_PUBLIC_SOMNIA_TREASURY_ADDRESS || "0xacA996A4d49e7Ed42dA68a20600F249BE6d024A4",
     gameLogger: process.env.NEXT_PUBLIC_SOMNIA_GAME_LOGGER_ADDRESS || "0x649A1a3cf745d60C98C12f3c404E09bdBb4151db",
     streams: process.env.NEXT_PUBLIC_SOMNIA_STREAMS_ADDRESS || "0x6AB397FF662e42312c003175DCD76EfF69D048Fc"
+  }
+};
+
+// Mantle Contract Addresses
+export const MANTLE_CONTRACTS = {
+  [MANTLE_NETWORKS.SEPOLIA]: {
+    treasury: process.env.NEXT_PUBLIC_MANTLE_TREASURY_ADDRESS || process.env.NEXT_PUBLIC_TREASURY_ADDRESS || "0xb424d2369F07b925D1218B08e56700AF5928287b",
+    gameLogger: process.env.NEXT_PUBLIC_MANTLE_GAME_LOGGER_ADDRESS || "0x0000000000000000000000000000000000000000"
   }
 };
 
@@ -95,6 +118,12 @@ export const TOKEN_CONFIG = {
     symbol: "STT",
     decimals: 18,
     type: "native"
+  },
+  MNT: {
+    name: "Mantle Token",
+    symbol: "MNT",
+    decimals: 18,
+    type: "native"
   }
 };
 
@@ -125,6 +154,12 @@ export const NETWORK_INFO = {
     chainId: 50312,
     nativeCurrency: TOKEN_CONFIG.STT,
     explorer: SOMNIA_EXPLORER_URLS[SOMNIA_NETWORKS.TESTNET]
+  },
+  [MANTLE_NETWORKS.SEPOLIA]: {
+    name: "Mantle Sepolia",
+    chainId: 5003,
+    nativeCurrency: TOKEN_CONFIG.MNT,
+    explorer: MANTLE_EXPLORER_URLS[MANTLE_NETWORKS.SEPOLIA]
   }
 };
 
@@ -134,6 +169,10 @@ export default {
   ARBITRUM_NETWORK_URLS,
   ARBITRUM_FAUCET_URLS,
   ARBITRUM_EXPLORER_URLS,
+  MANTLE_NETWORKS,
+  MANTLE_NETWORK_URLS,
+  MANTLE_EXPLORER_URLS,
+  MANTLE_CONTRACTS,
   SOMNIA_NETWORKS,
   SOMNIA_NETWORK_URLS,
   SOMNIA_EXPLORER_URLS,

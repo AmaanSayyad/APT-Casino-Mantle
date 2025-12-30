@@ -63,6 +63,16 @@ module.exports = {
         "User-Agent": "hardhat"
       }
     },
+    'mantle-sepolia': {
+      url: process.env.NEXT_PUBLIC_MANTLE_TESTNET_RPC || "https://rpc.sepolia.mantle.xyz",
+      accounts: process.env.MANTLE_TREASURY_PRIVATE_KEY ? [process.env.MANTLE_TREASURY_PRIVATE_KEY] : 
+                process.env.TREASURY_PRIVATE_KEY ? [process.env.TREASURY_PRIVATE_KEY] : [],
+      chainId: 5003,
+      timeout: 120000,
+      httpHeaders: {
+        "User-Agent": "hardhat"
+      }
+    },
     localhost: {
       url: "http://127.0.0.1:8545",
       chainId: 31337,
@@ -90,6 +100,14 @@ module.exports = {
         urls: {
           apiURL: "https://athens.explorer.zetachain.com/api",
           browserURL: "https://athens.explorer.zetachain.com"
+        }
+      },
+      {
+        network: "mantle-sepolia",
+        chainId: 5003,
+        urls: {
+          apiURL: "https://api-sepolia.mantlescan.xyz/api",
+          browserURL: "https://sepolia.mantlescan.xyz"
         }
       }
     ]

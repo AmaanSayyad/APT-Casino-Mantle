@@ -12,10 +12,10 @@ const WheelHistory = ({ gameHistory = [] }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
 
-   // Open Somnia Testnet Explorer link for transaction hash
-   const openSomniaTestnetExplorer = (hash) => {
+   // Open Mantle Sepolia Explorer link for transaction hash
+   const openMantleExplorer = (hash) => {
     if (hash && hash !== 'unknown') {
-      const explorerUrl = `https://shannon-explorer.somnia.network/tx/${hash}`;
+      const explorerUrl = `https://sepolia.mantlescan.xyz/tx/${hash}`;
       window.open(explorerUrl, '_blank');
     }
   };
@@ -25,14 +25,6 @@ const WheelHistory = ({ gameHistory = [] }) => {
     if (txHash) {
       const entropyExplorerUrl = `https://entropy-explorer.pyth.network/?chain=arbitrum-sepolia&search=${txHash}`;
       window.open(entropyExplorerUrl, '_blank');
-    }
-  };
-
-  // Open ZetaChain Explorer link
-  const openZetaChainExplorer = (txHash) => {
-    if (txHash && txHash !== 'unknown') {
-      const zetaExplorerUrl = `https://testnet.zetascan.com/tx/${txHash}`;
-      window.open(zetaExplorerUrl, '_blank');
     }
   };
   
@@ -172,7 +164,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap'
               }}>
-                {totalVolume.toFixed(5)} STT
+                {totalVolume.toFixed(5)} MNT
               </Typography>
               <Box 
                 sx={{ 
@@ -208,7 +200,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap'
               }}>
-                {biggestWin.toFixed(5)} STT
+                {biggestWin.toFixed(5)} MNT
               </Typography>
               <FaTrophy color="#FFA500" />
             </Box>
@@ -528,7 +520,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                           whiteSpace: 'nowrap'
                         }}
                       >
-                            {item.betAmount} STT
+                            {item.betAmount} MNT
                       </Typography>
                       <Image src="/coin.png" width={16} height={16} alt="coin" />
                     </Box>
@@ -559,7 +551,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                           whiteSpace: 'nowrap'
                         }}
                       >
-                            {item.payout} STT
+                            {item.payout} MNT
                       </Typography>
                       <Image src="/coin.png" width={16} height={16} alt="coin" />
                     </Box>
@@ -578,7 +570,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                       borderBottom: '1px solid rgba(104, 29, 219, 0.1)'
                     }}
                   >
-                    {item.entropyProof || item.somniaTxHash ? (
+                    {item.entropyProof || item.mantleTxHash ? (
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Chip 
@@ -600,13 +592,13 @@ const WheelHistory = ({ gameHistory = [] }) => {
                               }
                             }}
                           />
-                          {item.somniaTxHash && (
+                          {item.mantleTxHash && (
                             <Button
-                              onClick={() => openSomniaTestnetExplorer(item.somniaTxHash)}
+                              onClick={() => openMantleExplorer(item.mantleTxHash)}
                               size="small"
                               startIcon={<FaExternalLinkAlt size={10} />}
                               sx={{ 
-                                color: '#8B2398',
+                                color: '#65B3AE',
                                 fontSize: '0.7rem',
                                 minWidth: 'auto',
                                 p: 0,
@@ -616,7 +608,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                                 }
                               }}
                             >
-                              Somnia
+                              Mantle
                             </Button>
                           )}
                           {item.entropyProof?.transactionHash && (
@@ -638,29 +630,9 @@ const WheelHistory = ({ gameHistory = [] }) => {
                               Entropy
                             </Button>
                           )}
-                          {item.zetachainTxHash && item.zetachainTxHash !== 'pending' && (
-                            <Button
-                              onClick={() => openZetaChainExplorer(item.zetachainTxHash)}
-                              size="small"
-                              startIcon={<FaExternalLinkAlt size={10} />}
-                              sx={{ 
-                                color: '#00FF87',
-                                fontSize: '0.7rem',
-                                minWidth: 'auto',
-                                p: 0,
-                                '&:hover': {
-                                  backgroundColor: 'transparent',
-                                  textDecoration: 'underline',
-                                }
-                              }}
-                              title="View on ZetaChain Universal Explorer"
-                            >
-                              ZetaChain
-                            </Button>
-                          )}
                         </Box>
                         <Typography variant="caption" color="rgba(255,255,255,0.5)">
-                          {item.somniaTxHash ? 'Game logged on Somnia' : 'Pyth Entropy'}
+                          {item.mantleTxHash ? 'Game logged on Mantle' : 'Pyth Entropy'}
                         </Typography>
                       </Box>
                     ) : (

@@ -5,7 +5,34 @@
 
 import { defineChain } from 'viem';
 
-// Somnia Testnet Chain Definition
+// Mantle Sepolia Testnet Chain Definition
+// Configuration based on official Mantle documentation
+export const mantleSepolia = defineChain({
+  id: 5003, // Chain ID (0x138B in hex)
+  name: 'Mantle Sepolia Testnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'MNT',
+    symbol: 'MNT',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.sepolia.mantle.xyz'],
+    },
+    public: {
+      http: ['https://rpc.sepolia.mantle.xyz'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Mantle Sepolia Explorer',
+      url: 'https://sepolia.mantlescan.xyz',
+    },
+  },
+  testnet: true,
+});
+
+// Somnia Testnet Chain Definition (deprecated - kept for reference)
 // Configuration based on official network.md documentation
 export const somniaTestnet = defineChain({
   id: 50312, // Correct chain ID (0xc488 in hex)
@@ -33,5 +60,6 @@ export const somniaTestnet = defineChain({
 });
 
 export default {
+  mantleSepolia,
   somniaTestnet,
 };

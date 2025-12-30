@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Box, Typography, Paper, Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, CircularProgress, Fade } from '@mui/material';
 import { FaHistory, FaChartLine, FaFire, FaExclamationCircle, FaCoins, FaInfoCircle, FaTrophy, FaDice, FaExternalLinkAlt } from 'react-icons/fa';
 
-// Utility function to format STT amounts with proper decimal precision
-const formatMONAmount = (amount) => {
+// Utility function to format MNT amounts with proper decimal precision
+const formatMNTAmount = (amount) => {
   if (typeof amount !== 'number') {
     amount = parseFloat(amount) || 0;
   }
@@ -250,10 +250,10 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
     return redNumbers.includes(num) ? '#d82633' : '#333'; // Red or black
   };
 
-  // Open Somnia Testnet Explorer link for transaction hash
-  const openSomniaTestnetExplorer = (hash) => {
+  // Open Mantle Sepolia Explorer link for transaction hash
+  const openMantleExplorer = (hash) => {
     if (hash && hash !== 'unknown') {
-      const explorerUrl = `https://shannon-explorer.somnia.network/tx/${hash}`;
+      const explorerUrl = `https://sepolia.mantlescan.xyz/tx/${hash}`;
       window.open(explorerUrl, '_blank');
     }
   };
@@ -263,14 +263,6 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
     if (txHash) {
       const entropyExplorerUrl = `https://entropy-explorer.pyth.network/?chain=arbitrum-sepolia&search=${txHash}`;
       window.open(entropyExplorerUrl, '_blank');
-    }
-  };
-
-  // Open ZetaChain Explorer link
-  const openZetaChainExplorer = (txHash) => {
-    if (txHash && txHash !== 'unknown') {
-      const zetaExplorerUrl = `https://testnet.zetascan.com/tx/${txHash}`;
-      window.open(zetaExplorerUrl, '_blank');
     }
   };
   
@@ -484,7 +476,7 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                             )}
                           </Box>
                         </TableCell>
-                        <TableCell align="center">{formatMONAmount(bet.amount || bet.totalBetAmount || 0)} STT</TableCell>
+                        <TableCell align="center">{formatMNTAmount(bet.amount || bet.totalBetAmount || 0)} MNT</TableCell>
                         <TableCell align="center">
                           <Box 
                             sx={{ 
@@ -520,13 +512,13 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                             {bet.win ? (
                               <>
                                 <FaCoins size={12} color="#14D854" />
-                                +{formatMONAmount(bet.payout || bet.netResult || 0)} STT
+                                +{formatMNTAmount(bet.payout || bet.netResult || 0)} MNT
                               </>
                             ) : '-'}
                           </Typography>
                         </TableCell>
                         <TableCell align="center">
-                          {bet.entropyProof || bet.somniaTxHash || bet.zetachainTxHash ? (
+                          {bet.entropyProof || bet.mantleTxHash ? (
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'center' }}>
                               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, alignItems: 'center' }}>
                                 <Typography variant="caption" sx={{ color: '#FFC107', fontFamily: 'monospace', fontWeight: 'bold' }}>
@@ -534,9 +526,9 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                                 </Typography>
                               </Box>
                               <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', justifyContent: 'center' }}>
-                                {bet.somniaTxHash && (
+                                {bet.mantleTxHash && (
                                   <Box
-                                    onClick={() => openSomniaTestnetExplorer(bet.somniaTxHash)}
+                                    onClick={() => openMantleExplorer(bet.mantleTxHash)}
                                     sx={{
                                       display: 'flex',
                                       alignItems: 'center',
@@ -544,19 +536,19 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                                       cursor: 'pointer',
                                       padding: '2px 6px',
                                       borderRadius: '4px',
-                                      backgroundColor: 'rgba(139, 35, 152, 0.1)',
-                                      border: '1px solid rgba(139, 35, 152, 0.3)',
+                                      backgroundColor: 'rgba(101, 179, 174, 0.1)',
+                                      border: '1px solid rgba(101, 179, 174, 0.3)',
                                       transition: 'all 0.2s ease',
                                       '&:hover': {
-                                        backgroundColor: 'rgba(139, 35, 152, 0.2)',
+                                        backgroundColor: 'rgba(101, 179, 174, 0.2)',
                                         transform: 'scale(1.05)'
                                       }
                                     }}
-                                    title="View on Somnia Testnet Explorer"
+                                    title="View on Mantle Sepolia Explorer"
                                   >
-                                    <FaExternalLinkAlt size={10} color="#8B2398" />
-                                    <Typography variant="caption" sx={{ color: '#8B2398', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                                      Somnia
+                                    <FaExternalLinkAlt size={10} color="#65B3AE" />
+                                    <Typography variant="caption" sx={{ color: '#65B3AE', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                                      Mantle
                                     </Typography>
                                   </Box>
                                 )}
@@ -609,51 +601,6 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                                     <FaExternalLinkAlt size={10} color="#681DDB" />
                                     <Typography variant="caption" sx={{ color: '#681DDB', fontSize: '0.7rem', fontWeight: 'bold' }}>
                                       Entropy
-                                    </Typography>
-                                  </Box>
-                                )}
-                                {bet.zetachainTxHash && bet.zetachainTxHash !== 'pending' && (
-                                  <Box
-                                    onClick={() => openZetaChainExplorer(bet.zetachainTxHash)}
-                                    sx={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: 0.5,
-                                      cursor: 'pointer',
-                                      padding: '2px 6px',
-                                      borderRadius: '4px',
-                                      backgroundColor: 'rgba(0, 255, 135, 0.1)',
-                                      border: '1px solid rgba(0, 255, 135, 0.3)',
-                                      transition: 'all 0.2s ease',
-                                      '&:hover': {
-                                        backgroundColor: 'rgba(0, 255, 135, 0.2)',
-                                        transform: 'scale(1.05)'
-                                      }
-                                    }}
-                                    title="View on ZetaChain Universal Explorer"
-                                  >
-                                    <FaExternalLinkAlt size={10} color="#00FF87" />
-                                    <Typography variant="caption" sx={{ color: '#00FF87', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                                      ZetaChain
-                                    </Typography>
-                                  </Box>
-                                )}
-                                {bet.zetachainTxHash === 'pending' && (
-                                  <Box
-                                    sx={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: 0.5,
-                                      padding: '2px 6px',
-                                      borderRadius: '4px',
-                                      backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                                      border: '1px solid rgba(255, 193, 7, 0.3)',
-                                    }}
-                                    title="ZetaChain transaction pending"
-                                  >
-                                    <CircularProgress size={10} sx={{ color: '#FFC107' }} />
-                                    <Typography variant="caption" sx={{ color: '#FFC107', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                                      ZetaChain
                                     </Typography>
                                   </Box>
                                 )}
@@ -785,7 +732,7 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                       </Box>
                       <Typography variant="body2" color="rgba(255,255,255,0.7)">Total Wagered</Typography>
                     </Box>
-                    <Typography variant="h4" fontWeight="bold" color="white" sx={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{formatMONAmount(stats.totalWagered)} STT</Typography>
+                    <Typography variant="h4" fontWeight="bold" color="white" sx={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{formatMNTAmount(stats.totalWagered)} MNT</Typography>
                   </Box>
                   
                   <Box 
@@ -827,7 +774,7 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                       color={stats.netProfit >= 0 ? '#14D854' : '#d82633'}
                       sx={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}
                     >
-                      {stats.netProfit >= 0 ? '+' : ''}{formatMONAmount(stats.netProfit)} STT
+                      {stats.netProfit >= 0 ? '+' : ''}{formatMNTAmount(stats.netProfit)} MNT
                     </Typography>
                   </Box>
                 </Box>
