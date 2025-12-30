@@ -1,10 +1,10 @@
-# APT Casino - Somnia Testnet 🎰
+# APT Casino - Mantle Sepolia Testnet 🎰
 
-A production-ready decentralized casino platform built on Somnia Testnet featuring:
-- **Somnia Data Streams Integration** - Real-time game result notifications across all connected clients
+A production-ready decentralized casino platform built on Mantle Sepolia Testnet featuring:
+- **On-Chain Game Logging** - All game results permanently stored on Mantle blockchain
 - **Pyth Entropy** - Provably fair gaming with cryptographically secure randomness
 - **MetaMask Smart Accounts** - Enhanced wallet experience with batch transactions
-- **Multi-Network Architecture** - Somnia Testnet for gaming, Arbitrum Sepolia for entropy
+- **Multi-Network Architecture** - Mantle Sepolia for gaming, Arbitrum Sepolia for entropy
 
 ## 🎮 The Story Behind APT Casino
 
@@ -39,7 +39,7 @@ APT Casino addresses these problems by offering:
 
 - **Multiple Games**: Wheel, Roulette, Plinko, and Mines with verifiable outcomes
 - **MetaMask Smart Accounts**: Enhanced wallet experience with batch transactions
-- **STT Token**: Native currency for Somnia Testnet
+- **MNT Token**: Native currency for Mantle Network
 - **Flexible Withdrawal**: Unrestricted access to funds
 - **Transparent Bonuses**: Clear terms without hidden traps
 - **True Asset Ownership**: Decentralized asset management
@@ -65,7 +65,7 @@ APT Casino addresses these problems by offering:
 
 ### 3. Multi-Chain Architecture
 
-- **Gaming Network**: Somnia Testnet (Chain ID: 50312)
+- **Gaming Network**: Mantle Sepolia Testnet (Chain ID: 5003)
 - **Entropy Network**: Arbitrum Sepolia (Chain ID: 421614)
 
 ### 4. Game Selection
@@ -90,19 +90,19 @@ APT Casino addresses these problems by offering:
 
 ## 🚀 Getting Started
 
-1. **Connect Wallet**: Connect your MetaMask wallet to Somnia Testnet
-2. **Get Tokens**: Get STT tokens from the Somnia Testnet faucet
-3. **Deposit**: Deposit STT to your treasury balance
+1. **Connect Wallet**: Connect your MetaMask wallet to Mantle Sepolia Testnet
+2. **Get Tokens**: Get MNT tokens from the Mantle Sepolia faucet
+3. **Deposit**: Deposit MNT to your treasury balance
 4. **Play**: Start playing provably fair games!
 
 ### Network Configuration
 
-Add Somnia Testnet to MetaMask:
-- **Network Name**: Somnia Testnet
-- **RPC URL**: `https://dream-rpc.somnia.network`
-- **Chain ID**: `50312`
-- **Currency Symbol**: `STT`
-- **Block Explorer**: `https://shannon-explorer.somnia.network`
+Add Mantle Sepolia Testnet to MetaMask:
+- **Network Name**: Mantle Sepolia Testnet
+- **RPC URL**: `https://rpc.sepolia.mantle.xyz`
+- **Chain ID**: `5003`
+- **Currency Symbol**: `MNT`
+- **Block Explorer**: `https://sepolia.mantlescan.xyz`
 
 ### Quick Setup
 
@@ -183,15 +183,15 @@ graph TB
     
     subgraph API["API Layer"]
         I[Next.js API Routes] --> J[Pyth Entropy Endpoints]
-        I --> K[Deposit/Withdraw MON]
+        I --> K[Deposit/Withdraw MNT]
         I --> L[Game Logic]
         I --> SAA[Smart Account API]
         I --> SC[Socket.IO Chat]
         I --> LP[Livepeer API]
     end
     
-    subgraph Gaming["Gaming Network - Somnia Testnet"]
-        MT[Somnia Testnet] --> STT[STT Token]
+    subgraph Gaming["Gaming Network - Mantle Sepolia"]
+        MT[Mantle Sepolia] --> MNT[MNT Token]
         MT --> DEP[Deposits/Withdrawals]
         MT --> SA_BATCH[Batch Transactions]
         MT --> GAS[Gasless Transactions]
@@ -254,8 +254,8 @@ flowchart TD
     I --> K
     
     K --> L{Network Check}
-    L -->|Somnia Testnet| M[Connection Success]
-    L -->|Wrong Network| N[Switch to Somnia Testnet]
+    L -->|Mantle Sepolia| M[Connection Success]
+    L -->|Wrong Network| N[Switch to Mantle Sepolia]
     
     N --> O{User Approves?}
     O -->|Yes| M
@@ -317,7 +317,7 @@ graph TB
     end
 ```
 
-## 🌐 Multi-Network Architecture (Somnia Testnet + Arbitrum)
+## 🌐 Multi-Network Architecture (Mantle Sepolia + Arbitrum)
 
 ```mermaid
 graph TB
@@ -332,10 +332,10 @@ graph TB
         NS --> GM[Game Manager]
     end
     
-    subgraph Somnia TestnetNet["Somnia Testnet (Chain ID: 50312)"]
-        MT[Somnia Testnet] --> STT[STT Token]
-        STT --> DEP[Deposit Contract]
-        STT --> WITH[Withdraw Contract]
+    subgraph MantleNet["Mantle Sepolia (Chain ID: 5003)"]
+        MT[Mantle Sepolia] --> MNT[MNT Token]
+        MNT --> DEP[Deposit Contract]
+        MNT --> WITH[Withdraw Contract]
         DEP --> TB[Treasury Balance]
         WITH --> TB
         
@@ -405,7 +405,7 @@ sequenceDiagram
     participant U as User
     participant SA as Smart Account
     participant UI as Game UI
-    participant MT as Somnia Testnet
+    participant MT as Mantle Sepolia
     participant API as API Route
     participant SC as Smart Contract (Arbitrum)
     participant PE as Pyth Entropy
@@ -506,7 +506,7 @@ sequenceDiagram
     participant U as User
     participant UI as Casino UI
     participant SA as Smart Account
-    participant MT as Somnia Testnet
+    participant MT as Mantle Sepolia
     participant AS as Arbitrum Sepolia
     participant PE as Pyth Entropy
     
@@ -515,7 +515,7 @@ sequenceDiagram
     U->>UI: Select Multiple Games
     UI->>SA: Prepare Batch Transaction
     
-    Note over SA,MT: Batch Transaction on Somnia Testnet
+    Note over SA,MT: Batch Transaction on Mantle Sepolia
     SA->>MT: Batch Bet Transaction
     MT->>SA: Confirm All Bets
     
@@ -525,7 +525,7 @@ sequenceDiagram
     PE->>AS: Return Entropy Proofs
     AS->>UI: All Game Results
     
-    Note over SA,MT: Batch Payout on Somnia Testnet
+    Note over SA,MT: Batch Payout on Mantle Sepolia
     UI->>SA: Process Batch Payouts
     SA->>MT: Batch Payout Transaction
     MT->>SA: Confirm All Payouts
@@ -563,7 +563,7 @@ flowchart TD
 
 ## 🔮 Future Roadmap
 
-- **Mainnet Launch**: Deploying on mainnet for real-world use
+- **Mainnet Launch**: Deploying on Mantle mainnet for real-world use
 - **Additional Games**: Expanding the game selection
 - **Enhanced DeFi Features**: Staking, farming, yield strategies
 - **Developer Platform**: Allowing third-party game development
@@ -572,261 +572,20 @@ flowchart TD
 - **Expanded Smart Account Features**: More delegation options
 - **Tournament System**: Competitive gaming with leaderboards and prizes
 
-## 📡 Somnia Data Streams Integration 
-
-**This project demonstrates real-time gaming using Somnia Data Streams SDK** - turning on-chain game results into live, reactive streams that update all connected clients instantly.
-
-### 🎯 How SDS is Used
-
-APT Casino leverages **Somnia Data Streams SDK** to create a real-time, reactive gaming experience:
-
-- **Real-time Notifications**: Instant updates when ANY player completes a game (< 1 second latency)
-- **Global Activity Feed**: All connected browsers see live gaming activity simultaneously
-- **WebSocket Subscriptions**: Efficient event streaming with automatic reconnection
-- **Multi-Client Broadcasting**: One game completion → all clients notified instantly
-- **On-Chain Verification**: All notifications linked to verifiable blockchain transactions
-
-### 🏗️ Architecture
-
-```mermaid
-graph TB
-    subgraph "Game Execution"
-        A[Player Plays Game] --> B[Entropy Generated]
-        B --> C[Game Result Calculated]
-        C --> D[Backend API Call]
-    end
-    
-    subgraph "Somnia Testnet"
-        D --> E[Treasury Signs Transaction]
-        E --> F[GameLogger Contract]
-        F --> G[GameResultLogged Event]
-    end
-    
-    subgraph "Somnia Data Streams"
-        G --> H[Somnia Streams Protocol]
-        H --> I[Event Schema Registry]
-        I --> J[WebSocket/HTTP Polling]
-    end
-    
-    subgraph "Client Applications"
-        J --> K[All Connected Browsers]
-        K --> L[Notification Display]
-    end
-```
-
-### 🔄 Event Flow
-
-```mermaid
-sequenceDiagram
-    participant Player
-    participant Game
-    participant API
-    participant Treasury
-    participant GameLogger
-    participant SDS as Somnia Data Streams
-    participant AllClients
-
-    Player->>Game: Complete Game
-    Game->>API: POST /api/log-game
-    API->>Treasury: Sign with Private Key
-    Treasury->>GameLogger: logGameResult()
-    GameLogger->>GameLogger: Store Game Data
-    GameLogger->>SDS: Emit GameResultLogged Event
-    SDS->>AllClients: Broadcast Event (Real-time)
-    AllClients->>AllClients: Show Notification Instantly
-```
-
-### 📋 Event Schema Registration
-
-**Schema ID:** `apt-casino-game-result-logged`
-
-**Schema Definition:**
-```javascript
-{
-  schemaId: 'apt-casino-game-result-logged',
-  params: [
-    { name: 'logId', type: 'bytes32', indexed: true },
-    { name: 'player', type: 'address', indexed: true },
-    { name: 'gameType', type: 'uint8', indexed: false },
-    { name: 'betAmount', type: 'uint256', indexed: false },
-    { name: 'payout', type: 'uint256', indexed: false },
-    { name: 'entropyRequestId', type: 'bytes32', indexed: false },
-    { name: 'entropyTxHash', type: 'string', indexed: false },
-    { name: 'timestamp', type: 'uint256', indexed: false }
-  ]
-}
-```
-
-**Registration:**
-```bash
-node scripts/register-game-result-schema.js
-```
-
-### 💻 SDK Implementation
-
-**Service Architecture:**
-```mermaid
-graph LR
-    A[SomniaStreamsService] --> B{WebSocket Available?}
-    B -->|Yes| C[WebSocket Mode]
-    B -->|No| D[HTTP Polling Mode]
-    
-    C --> E[Real-time Events < 1s]
-    D --> F[5-Second Polling]
-    
-    E --> G[Event Callbacks]
-    F --> G
-    
-    G --> H[Global Notification System]
-```
-
-**Key Implementation Files:**
-- `src/services/SomniaStreamsService.js` - Main SDS service implementation
-- `src/hooks/useSomniaStreams.js` - React hook wrapper
-- `src/components/GlobalNotificationSystem.jsx` - UI integration
-- `src/config/somniaStreams.js` - Configuration
-- `somnia-streams/` - Somnia Streams SDK package
-
-### 🔌 SDK Usage Example
-
-**1. Initialize SDK:**
-```javascript
-import { SDK } from '../../somnia-streams/dist/index.js';
-import { createPublicClient, webSocket } from 'viem';
-
-const publicClient = createPublicClient({
-  chain: somniaTestnetConfig,
-  transport: webSocket('wss://dream-rpc.somnia.network')
-});
-
-const sdk = new SDK({ public: publicClient });
-```
-
-**2. Subscribe to Events:**
-```javascript
-const subscription = await sdk.streams.subscribe({
-  somniaStreamsEventId: 'apt-casino-game-result-logged',
-  ethCalls: [],
-  context: '',
-  onlyPushChanges: false,
-  onData: (data) => {
-    // Handle real-time event data
-    const event = parseGameResultEvent(data);
-    notifyAllClients(event);
-  },
-  onError: (error) => {
-    // Handle errors with auto-reconnection
-  }
-});
-```
-
-**3. React Hook Usage:**
-```javascript
-import { useSomniaStreams } from '@/hooks/useSomniaStreams';
-
-function GameComponent() {
-  const { isConnected, error } = useSomniaStreams({
-    onGameResult: (event) => {
-      // Handle new game result in real-time
-      console.log('New game:', event);
-      showNotification(event);
-    },
-    onError: (error) => {
-      console.error('Stream error:', error);
-    },
-    autoConnect: true
-  });
-  
-  return (
-    <div>
-      {isConnected ? '✅ Connected to Data Streams' : '⏳ Connecting...'}
-    </div>
-  );
-}
-```
-
-### ⚡ Real-Time Features
-
-**1. Global Notifications:**
-- All connected users see game results instantly
-- No polling required - event-driven updates
-- WebSocket-based for minimal latency (< 1 second)
-
-**2. Connection Management:**
-- Auto-reconnection with exponential backoff (5 attempts)
-- Fallback to HTTP polling if WebSocket fails
-- Connection status indicators in UI
-
-**3. Event Processing:**
-- Event deduplication using unique IDs
-- Validation of event structure
-- Error handling and recovery
-
-**4. Notification Display:**
-- Maximum 5 concurrent notifications
-- 8-second auto-dismiss
-- Win/loss color coding
-- Game type icons
-- Profit/loss calculation
-
-### 📊 Performance Characteristics
-
-**WebSocket Mode:**
-- **Latency:** < 1 second
-- **Bandwidth:** Minimal (event-driven)
-- **Reliability:** High (with auto-reconnection)
-
-**HTTP Polling Mode (Fallback):**
-- **Latency:** 0-5 seconds
-- **Bandwidth:** Regular polling requests
-- **Reliability:** High (no connection state)
-
-### 🧪 Testing SDS Integration
-
-```bash
-# Test Data Streams service
-node scripts/test-somnia-streams.js
-
-# Verify schema registration
-node scripts/verify-schema-registration.js
-
-# Test WebSocket diagnostics
-node scripts/diagnose-websocket.js
-```
-
-### 🎮 Real-Time Use Case
-
-**Problem Solved:**
-Traditional casinos have isolated gaming experiences - players don't see what others are doing. This creates a disconnected, non-social environment.
-
-**SDS Solution:**
-- **Live Activity Feed**: All players see game results in real-time
-- **Social Engagement**: Shared experience creates community
-- **Instant Updates**: No page refresh needed
-- **Multi-Client Sync**: All browsers stay synchronized
-
-**Example Flow:**
-1. Player A completes Roulette game
-2. Event emitted on Somnia Testnet (< 1 second)
-3. Somnia Data Streams captures event
-4. All connected clients (Player B, C, D...) receive notification instantly
-5. UI updates across all browsers simultaneously
-6. Players see live casino activity in real-time
-
 ## 🎮 Game Logger
 
-All game results are permanently logged on Somnia Testnet blockchain:
+All game results are permanently logged on Mantle Sepolia blockchain:
 
 ### Features
 - **Immutable Records**: All game outcomes stored on-chain
 - **Verifiable History**: Transaction links for every game
-- **Dual-Network Architecture**: Game logs on Somnia, entropy on Arbitrum
+- **Dual-Network Architecture**: Game logs on Mantle, entropy on Arbitrum
 - **Automatic Logging**: Non-blocking, fire-and-forget logging
 
 ### Smart Contract
 
 ```solidity
-contract SomniaGameLogger {
+contract MantleGameLogger {
   function logGameResult(
     string memory gameType,
     uint256 betAmount,
@@ -840,9 +599,9 @@ contract SomniaGameLogger {
 ### Integration Example
 
 ```javascript
-import { useSomniaGameLogger } from '@/hooks/useSomniaGameLogger';
+import { useMantleGameLogger } from '@/hooks/useMantleGameLogger';
 
-const { logGame, getExplorerUrl } = useSomniaGameLogger();
+const { logGame, getExplorerUrl } = useMantleGameLogger();
 
 // After game completes
 const txHash = await logGame({
@@ -861,26 +620,22 @@ console.log('View on explorer:', getExplorerUrl(txHash));
 Create a `.env` file with the following:
 
 ```env
-# Somnia Testnet Configuration
-NEXT_PUBLIC_SOMNIA_RPC_URL=https://dream-rpc.somnia.network
-NEXT_PUBLIC_SOMNIA_CHAIN_ID=50312
-NEXT_PUBLIC_SOMNIA_EXPLORER_URL=https://shannon-explorer.somnia.network
+# Mantle Sepolia Configuration
+NEXT_PUBLIC_MANTLE_RPC_URL=https://rpc.sepolia.mantle.xyz
+NEXT_PUBLIC_MANTLE_CHAIN_ID=5003
+NEXT_PUBLIC_MANTLE_EXPLORER_URL=https://sepolia.mantlescan.xyz
 
 # Arbitrum Sepolia (for Pyth Entropy)
 NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
 NEXT_PUBLIC_ARBITRUM_SEPOLIA_CHAIN_ID=421614
 
-# Contract Addresses (Somnia Testnet)
-NEXT_PUBLIC_SOMNIA_TREASURY_ADDRESS=<your-treasury-address>
-NEXT_PUBLIC_SOMNIA_GAME_LOGGER_ADDRESS=<your-game-logger-address>
+# Contract Addresses (Mantle Sepolia)
+NEXT_PUBLIC_MANTLE_TREASURY_ADDRESS=<your-treasury-address>
+NEXT_PUBLIC_MANTLE_GAME_LOGGER_ADDRESS=<your-game-logger-address>
 
 # Contract Addresses (Arbitrum Sepolia)
 NEXT_PUBLIC_PYTH_ENTROPY_ADDRESS=<pyth-entropy-address>
 NEXT_PUBLIC_CASINO_ENTROPY_CONSUMER_ADDRESS=<your-entropy-consumer-address>
-
-# Somnia Data Streams
-NEXT_PUBLIC_SOMNIA_STREAMS_PROTOCOL_ADDRESS=0x6AB397FF662e42312c003175DCD76EfF69D048Fc
-NEXT_PUBLIC_GAME_RESULT_EVENT_SCHEMA_ID=apt-casino-game-result-logged
 
 # Private Keys (for deployment only, never commit!)
 DEPLOYER_PRIVATE_KEY=<your-private-key>
@@ -889,11 +644,11 @@ DEPLOYER_PRIVATE_KEY=<your-private-key>
 ### Smart Contract Deployment
 
 ```bash
-# Deploy contracts to Somnia Testnet
-npx hardhat run scripts/deploy-somnia-contracts.js --network somniaTestnet
+# Deploy contracts to Mantle Sepolia
+npx hardhat run scripts/deploy-mantle-contracts.js --network mantleSepolia
 
 # Verify deployment
-node scripts/test-somnia-deployment.js
+node scripts/test-mantle-deployment.js
 ```
 
 ### Frontend Deployment
@@ -909,67 +664,9 @@ vercel deploy
 npm run start
 ```
 
-### Post-Deployment Steps
-
-1. **Register Data Streams Schema**
-   ```bash
-   node scripts/register-game-result-schema.js
-   ```
-
-2. **Verify Schema Registration**
-   ```bash
-   node scripts/verify-schema-registration.js
-   ```
-
-3. **Test Game Logger**
-   ```bash
-   node scripts/verify-game-logger.js
-   ```
-
-4. **Test Data Streams**
-   ```bash
-   node scripts/test-somnia-streams.js
-   ```
-
-5. **Test All Games**
-   ```bash
-   node scripts/test-entropy-all-games.js
-   ```
-
-**How SDS is Used:**
-- Real-time game result notifications using SDS SDK
-- WebSocket subscriptions for instant updates
-- Global activity feed across all connected clients
-- Event-driven architecture with automatic reconnection
-
-**Key Implementation:**
-- **Service:** `src/services/SomniaStreamsService.js`
-- **Hook:** `src/hooks/useSomniaStreams.js`
-- **Component:** `src/components/GlobalNotificationSystem.jsx`
-- **Schema ID:** `apt-casino-game-result-logged`
-
-**Real-Time UX:**
-- < 1 second latency for notifications
-- Multi-client synchronization
-- Automatic fallback to HTTP polling
-- Connection status indicators
-
-**Somnia Integration:**
-- ✅ Deployed on Somnia Testnet (Chain ID: 50312)
-- ✅ Smart contracts live and verified
-- ✅ Events emitting correctly
-- ✅ All transactions verifiable on explorer
-
-**Potential Impact:**
-- Production-ready casino platform
-- Perfect showcase for SDS real-time gaming use case
-- Scalable architecture for thousands of concurrent players
-- Well-documented for ecosystem learning
-
 ## 📚 Additional Documentation
 
 ### Service Documentation
-- [Somnia Streams Service](./src/services/SOMNIA_STREAMS_SERVICE_README.md) - Detailed service implementation
 - [Game Logger Service](./src/services/GAME_LOGGER_README.md) - On-chain logging details
 
 ## 🔧 Development
@@ -981,8 +678,7 @@ npm run start
 npm test
 
 # Run specific test suite
-npm test -- SomniaGameLogger
-npm test -- SomniaStreamsService
+npm test -- MantleGameLogger
 
 # Run with coverage
 npm test -- --coverage
@@ -994,20 +690,14 @@ npm test -- --coverage
 # Verify Pyth Entropy (Arbitrum Sepolia)
 node scripts/verify-pyth-entropy.js
 
-# Verify Game Logger (Somnia Testnet)
+# Verify Game Logger (Mantle Sepolia)
 node scripts/verify-game-logger.js
-
-# Verify Data Streams
-node scripts/test-somnia-streams.js
 
 # Verify all games
 node scripts/test-entropy-all-games.js
 
 # Verify API routes
 node scripts/verify-api-routes.js
-
-# Verify game history
-node scripts/verify-game-history-service.js
 ```
 
 ### Project Structure
@@ -1015,8 +705,7 @@ node scripts/verify-game-history-service.js
 ```
 apt-casino/
 ├── contracts/              # Smart contracts
-│   ├── SomniaTreasury.sol
-│   └── SomniaGameLogger.sol
+│   └── MantleGameLogger.sol
 ├── src/
 │   ├── app/               # Next.js pages
 │   ├── components/        # React components
@@ -1026,16 +715,20 @@ apt-casino/
 │   └── utils/             # Utility functions
 ├── scripts/               # Deployment and verification scripts
 ├── docs/                  # Documentation
-├── deployments/           # Deployment artifacts
-└── somnia-streams/        # Somnia Streams SDK
+└── deployments/           # Deployment artifacts
 ```
 
 ## 🔗 Links & Resources
 
-### Live Application
-- **Website Link**: [https://apt-casino-somnia.vercel.app/](https://apt-casino-somnia.vercel.app/)
-- **Live Demo**: [https://youtu.be/F-6Gsy1Qi1s](https://youtu.be/F-6Gsy1Qi1s)
-- **Pitch Deck**: [https://www.figma.com/deck/Q5MbzVrmnX4954oa1CkydC/APT-Casino-Somnia?node-id=1-1812&p=f&t=Kc0BblSLdau5HO3b-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1](https://www.figma.com/deck/Q5MbzVrmnX4954oa1CkydC/APT-Casino-Somnia?node-id=1-1812&p=f&t=Kc0BblSLdau5HO3b-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1)
-- **Contract Links**: 
-  - https://shannon-explorer.somnia.network/address/0x649A1a3cf745d60C98C12f3c404E09bdBb4151db?tab=contract
-  - https://shannon-explorer.somnia.network/address/0xacA996A4d49e7Ed42dA68a20600F249BE6d024A4?tab=contract
+### Networks
+- **Mantle Sepolia Explorer**: https://sepolia.mantlescan.xyz
+- **Mantle Faucet**: https://faucet.sepolia.mantle.xyz
+- **Arbitrum Sepolia Explorer**: https://sepolia.arbiscan.io
+
+### Documentation
+- **Mantle Docs**: https://docs.mantle.xyz
+- **Pyth Entropy Docs**: https://docs.pyth.network/entropy
+
+## 📄 License
+
+MIT License - see LICENSE file for details.

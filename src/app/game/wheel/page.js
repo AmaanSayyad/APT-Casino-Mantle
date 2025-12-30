@@ -732,25 +732,13 @@ export default function Home() {
               isSpinning={isSpinning}
             />
             
-            {/* ZetaChain logging status indicator */}
-            {zetaChainEnabled && (
+            {/* Mantle logging status indicator */}
+            {isLogging && (
               <div className="mt-4 flex items-center justify-center gap-2 text-sm">
-                {isZetaChainLogging ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
-                    <span className="text-red-400">
-                      Logging to ZetaChain...
-                    </span>
-                  </>
-                ) : zetaChainError ? (
-                  <span className="text-red-400 flex items-center gap-1">
-                    ⚠️ ZetaChain: {zetaChainError}
-                  </span>
-                ) : (
-                  <span className="text-green-400 flex items-center gap-1">
-                    ✓ ZetaChain logging enabled
-                  </span>
-                )}
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500"></div>
+                <span className="text-purple-400">
+                  Logging to Mantle...
+                </span>
               </div>
             )}
           </div>

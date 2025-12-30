@@ -1,72 +1,43 @@
 import { NextResponse } from 'next/server';
 import { ethers, JsonRpcProvider, Wallet } from 'ethers';
-import { somniaTestnetConfig } from '@/config/somniaTestnetConfig';
-import { SOMNIA_CONTRACTS, SOMNIA_NETWORKS } from '@/config/contracts';
-import PYTH_ENTROPY_CONFIG from '@/config/pythEntropy.js';
+import { mantleTestnetConfig } from '@/config/mantleTestnetConfig';
 
 /**
- * Treasury Balance API - Dual Network
+ * Treasury Balance API - Mantle Network
  * 
- * NETWORK ARCHITECTURE:
- * - Treasury operations: Somnia Testnet (STT balance)
- * - Entropy operations: Arbitrum Sepolia (ETH for entropy fees)
- * 
- * This API returns information about both networks to provide
- * complete visibility into the casino's operational status.
- * 
- * Validates: Requirements 12.3
+ * Returns treasury balance information for the Mantle Sepolia Testnet.
  */
 export async function GET() {
   try {
-    // Use Somnia Testnet for treasury operations
-    const SOMNIA_RPC_URL = somniaTestnetConfig.rpcUrls.default.http[0];
-    const SOMNIA_TREASURY_PRIVATE_KEY = process.env.SOMNIA_TESTNET_TREASURY_PRIVATE_KEY || process.env.TREASURY_PRIVATE_KEY;
+    const MANTLE_RPC_URL = mantleTestnetConfig.rpcUrls.default.http[0];
+    const TREASURY_PRIVATE_KEY = process.env.MANTLE_TREASURY_PRIVATE_KEY || process.env.TREASURY_PRIVATE_KEY;
     
-    if (!SOMNIA_TREASURY_PRIVATE_KEY) {
+    if (!TREASURY_PRIVATE_KEY) {
       return NextResponse.json(
         { error: 'Treasury not configured' },
         { status: 500 }
       );
     }
 
-    // Create provider for Somnia Testnet
-    const provider = new JsonRpcProvider(SOMNIA_RPC_URL);
+    const provider = new JsonRpcProvider(MANTLE_RPC_URL);
+    const treasuryWallet = new Wallet(TREASURY_PRIVATE_KEY, provider);
     
-    // Create treasury wallet
-    const treasuryWallet = new Wallet(SOMNIA_TREASURY_PRIVATE_KEY, provider);
-    
-    // Get treasury balance on Somnia
     const balance = await provider.getBalance(treasuryWallet.address);
-    const balanceInSTT = ethers.formatEther(balance);
-    
-    // Get Somnia treasury contract address
-    const treasuryContractAddress = SOMNIA_CONTRACTS[SOMNIA_NETWORKS.TESTNET].treasury;
-    
-    // Get entropy network (still on Arbitrum Sepolia)
-    const entropyNetwork = 'arbitrum-sepolia';
-    const entropyConfig = PYTH_ENTROPY_CONFIG.getNetworkConfig(entropyNetwork);
-    const entropyContractAddress = PYTH_ENTROPY_CONFIG.getEntropyContract(entropyNetwork);
+    const balanceInMNT = ethers.formatEther(balance);
     
     return NextResponse.json({
       success: true,
       treasury: {
         address: treasuryWallet.address,
-        contractAddress: treasuryContractAddress,
-        balance: balanceInSTT,
+        balance: balanceInMNT,
         balanceWei: balance.toString(),
-        currency: 'STT'
+        currency: 'MNT'
       },
       network: {
-        name: somniaTestnetConfig.name,
-        chainId: somniaTestnetConfig.id,
-        rpcUrl: SOMNIA_RPC_URL,
-        explorer: somniaTestnetConfig.blockExplorers.default.url
-      },
-      entropy: {
-        network: entropyConfig.name,
-        chainId: entropyConfig.chainId,
-        contractAddress: entropyContractAddress,
-        requiredFee: "0.001" // ETH on Arbitrum Sepolia
+        name: mantleTestnetConfig.name,
+        chainId: mantleTestnetConfig.id,
+        rpcUrl: MANTLE_RPC_URL,
+        explorer: mantleTestnetConfig.blockExplorers.default.url
       }
     });
     
@@ -81,4 +52,3 @@ export async function GET() {
     );
   }
 }
-

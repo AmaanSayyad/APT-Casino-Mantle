@@ -38,7 +38,8 @@ export function useMantleGameLogger() {
   }, [publicClient, walletClient, isConnected]);
 
   /**
-   * Log a game result to Mantle Sepolia Testnet
+   * Log a game result to Mantle Sepolia Testnet via API
+   * Uses treasury wallet (authorized logger) to write to contract
    */
   const logGame = useCallback(async ({
     gameType,
@@ -56,34 +57,39 @@ export function useMantleGameLogger() {
     setError(null);
 
     try {
-      const { provider, signer } = await getEthersProviderAndSigner();
-
-      if (!signer) {
-        throw new Error('Signer not available');
-      }
-
-      const logger = new MantleGameLogger(provider, signer);
-
-      const txHash = await logger.logGameResult({
-        gameType,
-        playerAddress: address,
-        betAmount,
-        result,
-        payout,
-        entropyProof
+      // Use API route to log game (treasury is authorized)
+      const response = await fetch('/api/log-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gameType,
+          playerAddress: address,
+          betAmount,
+          result,
+          payout,
+          entropyProof
+        })
       });
 
-      setLastLogTxHash(txHash);
-      return txHash;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to log game');
+      }
+
+      console.log('✅ Game logged via API:', data.transactionHash);
+      setLastLogTxHash(data.transactionHash);
+      return data.transactionHash;
 
     } catch (err) {
       console.error('Failed to log game to Mantle:', err);
       setError(err.message);
+      // Don't throw - game logging failure shouldn't break the game
       return null;
     } finally {
       setIsLogging(false);
     }
-  }, [address, isConnected, getEthersProviderAndSigner]);
+  }, [address, isConnected]);
 
   /**
    * Get player's game history from Mantle
