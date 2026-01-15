@@ -1,26 +1,19 @@
-# APT Casino - Mantle Sepolia Testnet 🎰
+# 🎮 APT-Casino: A Fully On-Chain, Provably-Fair Casino 
 
-A production-ready decentralized casino platform built on Mantle Sepolia Testnet featuring:
-- **On-Chain Game Logging** - All game results permanently stored on Mantle blockchain
-- **Pyth Entropy** - Provably fair gaming with cryptographically secure randomness
-- **MetaMask Smart Accounts** - Enhanced wallet experience with batch transactions
-- **Multi-Network Architecture** - Mantle Sepolia for gaming, Arbitrum Sepolia for entropy
+A couple of days back, I was was on etherscan exploring some transactions and saw an advertisement of https://stake.com/ which was giving 200% bonus on first deposit, I deposited 120 USDT into stake.com they gave 360 USDT as total balance in their controlled custodial wallet and when I started playing casino games I was shocked to see that I was only able to play with $1 per game and was unable to increase the betting amount beyond $1 and when I tried to explore and play other games on the platform the issue was persisting, I reached the customer support and got to know that this platform has cheated me under the name of wager limits as I was using the bonus scheme of 200%.
 
-## 🎮 The Story Behind APT Casino
+When I asked the customer support for refund they showed a mathematical equation which says if refund then I have to play $12,300 worth of gameplay and this was a big shock for me. Thereby, In the hope of getting the deposited money back, I played the different games of stake.com like roulette, mines, spin wheel, etc, the entire night and lost all the money and time.
 
-A few days ago, I was exploring transactions on Etherscan when I saw an advertisement for a popular centralized casino platform offering a 200% bonus on first deposits. I deposited 120 USDT and received 360 USDT in total balance in their custodial wallet.
-
-When I started playing, I discovered I could only bet $1 per game and couldn't increase the amount. After contacting customer support, I learned I had been trapped by hidden "wager limits" tied to the bonus scheme. To withdraw my original deposit, I would need to play $12,300 worth of games!
-
-In a desperate attempt to recover my funds, I played different games all night—roulette, mines, spin wheel—and lost everything.
-
-This frustrating experience inspired APT Casino: a combination of GameFi, AI, and DeFi where users can enjoy casino games in a safe, secure, and transparent environment that doesn't scam its users.
+I was very annoyed of that's how Apt-Casino was born, gamblefi all in one platform where new web3 users can play games, perform gambling but have a safe, secure, transparent environment that does not scam any of their users. Also, I wanted to address common issues in traditional gambling platforms.
 
 ## 🎯 The Problem
 
 The traditional online gambling industry suffers from several issues:
 
 - **Unfair Game Outcomes**: 99% of platforms manipulate game results, leading to unfair play
+
+<img src="https://github.com/user-attachments/assets/6880e1cb-769c-4272-8b66-686a90abf3be"/>
+
 - **High Fees**: Exorbitant charges for deposits, withdrawals, and gameplay
 - **Restrictive Withdrawal Policies**: Conditions that prevent users from accessing their funds
 - **Misleading Bonus Schemes**: Trapping users with unrealistic wagering requirements
@@ -32,14 +25,9 @@ The traditional online gambling industry suffers from several issues:
 
 APT Casino addresses these problems by offering:
 
-- **Provably Fair Gaming**: Powered by Pyth Entropy
-
-![commit_and_reveal](https://github.com/user-attachments/assets/cbb150e8-7d22-4903-9729-8ad00c20f1d5)
-
-
+- **Provably Fair Gaming**: All game outcomes are verifiably fair on-chain, not only by its developers but can be verified by the gambler themselves.
 - **Multiple Games**: Wheel, Roulette, Plinko, and Mines with verifiable outcomes
 - **MetaMask Smart Accounts**: Enhanced wallet experience with batch transactions
-- **MNT Token**: Native currency for Mantle Network
 - **Flexible Withdrawal**: Unrestricted access to funds
 - **Transparent Bonuses**: Clear terms without hidden traps
 - **True Asset Ownership**: Decentralized asset management
@@ -52,7 +40,7 @@ APT Casino addresses these problems by offering:
 ### 1. Smart Account Integration
 
 - **Batch Transactions**: Multiple bets in one transaction
-- **Delegated Gaming**: Authorize strategies to play on your behalf
+- **Delegated Gaming**: Authorise AI agent strategies to play on your behalf
 - **Lower Gas Costs**: Optimized for frequent players
 - **Enhanced Security**: Smart contract-based accounts
 
@@ -92,8 +80,8 @@ APT Casino addresses these problems by offering:
 
 1. **Connect Wallet**: Connect your MetaMask wallet to Mantle Sepolia Testnet
 2. **Get Tokens**: Get MNT tokens from the Mantle Sepolia faucet
-3. **Deposit**: Deposit MNT to your treasury balance
-4. **Play**: Start playing provably fair games!
+3. **Deposit**: Deposit MNT to your APT-Casino wallet balance
+4. **Play**: Start playing provably fair games without any txn confirmation requirement!
 
 ### Network Configuration
 
