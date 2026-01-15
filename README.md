@@ -719,16 +719,8 @@ apt-casino/
 ```
 
 ## 🔗 Links & Resources
-
-### Networks
-- **Mantle Sepolia Explorer**: https://sepolia.mantlescan.xyz
-- **Mantle Faucet**: https://faucet.sepolia.mantle.xyz
-- **Arbitrum Sepolia Explorer**: https://sepolia.arbiscan.io
-
-### Documentation
-- **Mantle Docs**: https://docs.mantle.xyz
-- **Pyth Entropy Docs**: https://docs.pyth.network/entropy
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
+- **Pitch Deck:** https://www.figma.com/deck/IXhYKDuxDTdzGQsMs9KS4L/APT-Casino-Mantle
+- **Demo Video:** 
+- **Pitch Video:**
+- **Live Website:** https://apt-casino-mantle-sigma.vercel.app/
+- **Github:** https://github.com/AmaanSayyad/APT-Casino-Mantle
