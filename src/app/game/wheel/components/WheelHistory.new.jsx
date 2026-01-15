@@ -193,7 +193,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap'
               }}>
-                {biggestWin.toFixed(5)} STT
+                {biggestWin.toFixed(5)} MNT
               </Typography>
               <FaTrophy color="#FFA500" />
             </Box>

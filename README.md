@@ -84,12 +84,23 @@ APT Casino addresses these problems by offering:
 
 ### Network Configuration
 
+#### Mantle Sepolia Testnet (Primary Network)
 Add Mantle Sepolia Testnet to MetaMask:
 - **Network Name**: Mantle Sepolia Testnet
 - **RPC URL**: `https://rpc.sepolia.mantle.xyz`
 - **Chain ID**: `5003`
 - **Currency Symbol**: `MNT`
 - **Block Explorer**: `https://sepolia.mantlescan.xyz`
+
+#### Arbitrum Sepolia Testnet (Entropy Network)
+The application also uses Arbitrum Sepolia for Pyth Entropy randomness:
+- **Network Name**: Arbitrum Sepolia
+- **RPC URL**: `https://sepolia-rollup.arbitrum.io/rpc`
+- **Chain ID**: `421614`
+- **Currency Symbol**: `ETH`
+- **Block Explorer**: `https://sepolia.arbiscan.io`
+
+**Note:** Users only need to connect to Mantle Sepolia. The application handles Arbitrum Sepolia operations automatically in the background.
 
 ### Quick Setup
 
@@ -102,14 +113,17 @@ cd apt-casino
 npm install
 
 # Set up environment variables
-cp .env.example .env
-# Edit .env with your configuration
+# Create a .env file in the root directory
+# Copy the environment variables from the "Environment Variables" section below
+# ⚠️ IMPORTANT: Never commit your .env file to version control!
 
 # Run development server
 npm run dev
 ```
 
 Visit `http://localhost:3000` to see the application.
+
+**Note:** Make sure to configure all required environment variables in your `.env` file before running the application. See the [Environment Variables](#environment-variables) section for the complete configuration.
 
 ## 🔷 Smart Account Features
 
@@ -414,6 +428,30 @@ sequenceDiagram
 - **Expanded Smart Account Features**: More delegation options
 - **Tournament System**: Competitive gaming with leaderboards and prizes
 
+## 📋 Deployed Contract Addresses
+
+### Mantle Sepolia Testnet (Chain ID: 5003)
+- **Treasury Contract**: `0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123`
+  - Handles deposits and withdrawals
+  - Deployed as wallet address (direct transfers)
+- **Game Logger Contract**: `0xDC6c0cEaB793A562EB7bacE45c006D2b47D03e62`
+  - Logs all game results on-chain
+  - Deployed: 2025-12-30
+
+### Arbitrum Sepolia Testnet (Chain ID: 421614)
+- **Pyth Entropy Contract**: `0x549ebba8036ab746611b4ffa1423eb0a4df61440`
+  - Official Pyth Network entropy contract for randomness
+- **Pyth Entropy Provider**: `0x6CC14824Ea2918f5De5C2f75A9Da968ad4BD6344`
+  - Provider address for entropy requests
+- **Casino Entropy Consumer V1**: `0x3670108F005C480500d424424ecB09A2896b64e9`
+  - Deployed: 2025-09-27
+- **Casino Entropy Consumer V2**: `0xF624e212434EFFD3943A1853a451cF172a99a1Cf`
+  - Deployed: 2025-09-27
+
+### Network Configuration
+- **Primary Network**: Mantle Sepolia Testnet (for deposits, withdrawals, game logging)
+- **Entropy Network**: Arbitrum Sepolia Testnet (for Pyth Entropy randomness)
+
 ## 🎮 Game Logger
 
 All game results are permanently logged on Mantle Sepolia blockchain:
@@ -438,6 +476,9 @@ contract MantleGameLogger {
 }
 ```
 
+### Contract Address
+- **Mantle Game Logger**: `0xDC6c0cEaB793A562EB7bacE45c006D2b47D03e62`
+
 ### Integration Example
 
 ```javascript
@@ -459,29 +500,98 @@ console.log('View on explorer:', getExplorerUrl(txHash));
 
 ### Environment Variables
 
-Create a `.env` file with the following:
+Create a `.env` file in the root directory with the following configuration:
 
 ```env
-# Mantle Sepolia Configuration
-NEXT_PUBLIC_MANTLE_RPC_URL=https://rpc.sepolia.mantle.xyz
-NEXT_PUBLIC_MANTLE_CHAIN_ID=5003
-NEXT_PUBLIC_MANTLE_EXPLORER_URL=https://sepolia.mantlescan.xyz
+# Supabase Configuration (for database and real-time features)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
 
-# Arbitrum Sepolia (for Pyth Entropy)
-NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
+# WalletConnect Configuration
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id_here
+
+# Mantle Sepolia Testnet Configuration (Primary Network)
+NEXT_PUBLIC_MANTLE_TESTNET_RPC=https://rpc.sepolia.mantle.xyz
+NEXT_PUBLIC_MANTLE_TESTNET_CHAIN_ID=5003
+NEXT_PUBLIC_MANTLE_TESTNET_EXPLORER=https://sepolia.mantlescan.xyz
+NEXT_PUBLIC_MANTLE_TESTNET_CURRENCY=MNT
+NEXT_PUBLIC_MANTLE_TESTNET_CURRENCY_SYMBOL=MNT
+NEXT_PUBLIC_MANTLE_TESTNET_CURRENCY_DECIMALS=18
+
+# Mantle Sepolia Treasury (for deposits/withdrawals)
+MANTLE_TREASURY_ADDRESS=0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
+MANTLE_TREASURY_PRIVATE_KEY=your_mantle_treasury_private_key_here
+NEXT_PUBLIC_MANTLE_TREASURY_ADDRESS=0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
+
+# Mantle Game Logger Contract (deployed 2025-12-30)
+NEXT_PUBLIC_MANTLE_GAME_LOGGER_ADDRESS=0xDC6c0cEaB793A562EB7bacE45c006D2b47D03e62
+
+# Arbitrum Sepolia Configuration (for Pyth Entropy)
+NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC=https://sepolia-rollup.arbitrum.io/rpc
 NEXT_PUBLIC_ARBITRUM_SEPOLIA_CHAIN_ID=421614
+NEXT_PUBLIC_ARBITRUM_SEPOLIA_EXPLORER=https://sepolia.arbiscan.io
 
-# Contract Addresses (Mantle Sepolia)
-NEXT_PUBLIC_MANTLE_TREASURY_ADDRESS=<your-treasury-address>
-NEXT_PUBLIC_MANTLE_GAME_LOGGER_ADDRESS=<your-game-logger-address>
+# Arbitrum Sepolia Treasury (for Pyth Entropy operations)
+ARBITRUM_TREASURY_ADDRESS=0xb424d2369F07b925D1218B08e56700AF5928287b
+ARBITRUM_TREASURY_PRIVATE_KEY=your_arbitrum_treasury_private_key_here
 
-# Contract Addresses (Arbitrum Sepolia)
-NEXT_PUBLIC_PYTH_ENTROPY_ADDRESS=<pyth-entropy-address>
-NEXT_PUBLIC_CASINO_ENTROPY_CONSUMER_ADDRESS=<your-entropy-consumer-address>
+# Pyth Entropy Contract Addresses (Public - Official Pyth Network contracts)
+NEXT_PUBLIC_PYTH_ENTROPY_CONTRACT=0x549ebba8036ab746611b4ffa1423eb0a4df61440
+NEXT_PUBLIC_PYTH_ENTROPY_PROVIDER=0x6CC14824Ea2918f5De5C2f75A9Da968ad4BD6344
+NEXT_PUBLIC_CASINO_ENTROPY_CONTRACT=0x549ebba8036ab746611b4ffa1423eb0a4df61440
+NEXT_PUBLIC_CASINO_ENTROPY_NETWORK=arbitrum-sepolia
+NEXT_PUBLIC_ENTROPY_NETWORK=arbitrum-sepolia
 
-# Private Keys (for deployment only, never commit!)
-DEPLOYER_PRIVATE_KEY=<your-private-key>
+# Casino Entropy Consumer Contract (Arbitrum Sepolia)
+NEXT_PUBLIC_ARBITRUM_SEPOLIA_CASINO_CONTRACT=0x3670108F005C480500d424424ecB09A2896b64e9
+
+# Network Defaults
+NEXT_PUBLIC_CHAIN_ID=5003
+NEXT_PUBLIC_NETWORK=mantle-sepolia
+NEXT_PUBLIC_DEFAULT_NETWORK=mantle-sepolia
+NEXT_PUBLIC_SUPPORTED_NETWORKS=mantle-sepolia,arbitrum-sepolia
+
+# Backward Compatibility (defaults to Mantle Sepolia)
+TREASURY_ADDRESS=0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
+TREASURY_PRIVATE_KEY=your_treasury_private_key_here
+
+# Gas Configuration
+GAS_LIMIT_DEPOSIT=21000
+GAS_LIMIT_WITHDRAW=100000
+
+# Deposit/Withdrawal Limits
+MIN_DEPOSIT=0.001
+MAX_DEPOSIT=100
+
+# Entropy Configuration
+NEXT_PUBLIC_ENTROPY_FEE=0.001
+NEXT_PUBLIC_GAS_LIMIT=500000
+NEXT_PUBLIC_GAS_PRICE=20000000000
+NEXT_PUBLIC_ENTROPY_TIMEOUT=30000
+NEXT_PUBLIC_MAX_RETRIES=3
+NEXT_PUBLIC_RETRY_DELAY=1000
+
+# Entropy Explorer
+NEXT_PUBLIC_ENTROPY_EXPLORER_URL=https://entropy-explorer.pyth.network
+NEXT_PUBLIC_ENTROPY_EXPLORER_API=https://entropy-explorer.pyth.network/api
+NEXT_PUBLIC_ENABLE_ENTROPY_EXPLORER=true
+NEXT_PUBLIC_ENABLE_BATCH_REQUESTS=true
+NEXT_PUBLIC_ENABLE_ENTROPY_VERIFICATION=true
+NEXT_PUBLIC_ENABLE_ENTROPY_STATS=true
+
+# Development Settings
+NODE_ENV=development
+NEXT_PUBLIC_APP_ENV=development
+NEXT_PUBLIC_DEBUG_MODE=true
+NEXT_PUBLIC_LOG_LEVEL=info
 ```
+
+**⚠️ Security Note:** 
+- **Never commit your `.env` file to version control**
+- Replace all placeholder values with your actual credentials
+- Private keys should be kept secure and never shared publicly
+- In production, use secure environment variable management (e.g., Vercel Environment Variables, AWS Secrets Manager, etc.)
+- Contract addresses shown are public and safe to share
 
 ### Smart Contract Deployment
 
