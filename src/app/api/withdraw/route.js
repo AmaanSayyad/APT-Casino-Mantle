@@ -125,121 +125,117 @@ export async function POST(request) {
     console.log('🔧 Treasury wallet address:', treasuryWallet.address);
     console.log('🔧 Amount in Wei:', amountWei.toString());
 
-    // Create Treasury Contract instance
-    const treasuryContract = new ethers.Contract(TREASURY_CONTRACT_ADDRESS, TREASURY_ABI, treasuryWallet);
-
-    // Verify contract ownership
-    let contractOwner;
+    // Check if treasury contract address is actually a contract
+    let isContract = false;
     try {
-      contractOwner = await treasuryContract.owner();
-      console.log(`🔐 Contract owner: ${contractOwner}`);
-      
-      if (contractOwner.toLowerCase() !== treasuryWallet.address.toLowerCase()) {
-        console.log('⚠️ Treasury wallet is NOT the contract owner, using direct transfer...');
-        
-        const walletBalance = await provider.getBalance(treasuryWallet.address);
-        console.log(`💰 Treasury Wallet balance: ${ethers.formatEther(walletBalance)} MNT`);
-        
-        if (walletBalance < amountWei) {
-          return NextResponse.json(
-            { error: `Treasury wallet has insufficient funds. Wallet balance: ${ethers.formatEther(walletBalance)} MNT` },
-            { status: 400 }
-          );
-        }
-        
-        console.log('💸 Sending MNT directly from Treasury wallet to user...');
-        const tx = await treasuryWallet.sendTransaction({
-          to: formattedUserAddress,
-          value: amountWei,
-        });
-        
-        console.log(`📤 Transaction sent: ${tx.hash}`);
-        
-        return new Response(JSON.stringify({
-          success: true,
-          transactionHash: tx.hash,
-          amount: amount,
-          userAddress: userAddress,
-          treasuryAddress: treasuryWallet.address,
-          status: 'pending',
-          message: 'Transaction sent from treasury wallet. Check Mantle Explorer for confirmation.',
-          note: 'Used direct wallet transfer'
-        }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-    } catch (ownerError) {
-      console.log('⚠️ Could not verify contract owner:', ownerError.message);
+      const code = await provider.getCode(TREASURY_CONTRACT_ADDRESS);
+      isContract = code && code !== '0x';
+      console.log(`📋 Treasury address is ${isContract ? 'a contract' : 'NOT a contract (wallet address)'}`);
+    } catch (codeError) {
+      console.log('⚠️ Could not check if address is contract:', codeError.message);
     }
 
-    console.log('💸 Calling emergencyWithdraw on Treasury Contract...');
+    // If treasury contract doesn't exist or contract call fails, use direct wallet transfer
+    let useDirectTransfer = !isContract;
     
-    // Estimate gas first
-    let gasEstimate;
-    try {
-      gasEstimate = await treasuryContract.emergencyWithdraw.estimateGas(
-        formattedUserAddress,
-        amountWei
-      );
-      console.log(`⛽ Estimated gas: ${gasEstimate.toString()}`);
-    } catch (estimateError) {
-      console.log('⚠️ Gas estimation failed, contract may revert:', estimateError.message);
+    if (isContract) {
+      // Create Treasury Contract instance
+      const treasuryContract = new ethers.Contract(TREASURY_CONTRACT_ADDRESS, TREASURY_ABI, treasuryWallet);
+
+      // Verify contract ownership
+      let contractOwner;
+      try {
+        contractOwner = await treasuryContract.owner();
+        console.log(`🔐 Contract owner: ${contractOwner}`);
+        
+        if (contractOwner.toLowerCase() !== treasuryWallet.address.toLowerCase()) {
+          console.log('⚠️ Treasury wallet is NOT the contract owner, using direct transfer...');
+          useDirectTransfer = true;
+        } else {
+          // Try to use contract method
+          console.log('💸 Attempting to use Treasury Contract emergencyWithdraw...');
+          
+          try {
+            // Estimate gas first
+            const gasEstimate = await treasuryContract.emergencyWithdraw.estimateGas(
+              formattedUserAddress,
+              amountWei
+            );
+            console.log(`⛽ Estimated gas: ${gasEstimate.toString()}`);
+            
+            // Execute contract call
+            const tx = await treasuryContract.emergencyWithdraw(
+              formattedUserAddress,
+              amountWei,
+              { gasLimit: gasEstimate * BigInt(120) / BigInt(100) } // Add 20% buffer
+            );
+
+            console.log(`📤 Transaction sent: ${tx.hash}`);
+            console.log(`✅ Withdraw MNT to ${formattedUserAddress}, TX: ${tx.hash}`);
+
+            return new Response(JSON.stringify({
+              success: true,
+              transactionHash: tx.hash,
+              amount: amount,
+              userAddress: formattedUserAddress,
+              toAddress: formattedUserAddress,
+              treasuryAddress: TREASURY_CONTRACT_ADDRESS,
+              status: 'pending',
+              message: 'Transaction sent successfully via Treasury Contract. Check Mantle Explorer for confirmation.'
+            }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          } catch (contractError) {
+            console.log('⚠️ Contract call failed:', contractError.message);
+            console.log('💸 Falling back to direct wallet transfer...');
+            useDirectTransfer = true;
+          }
+        }
+      } catch (ownerError) {
+        console.log('⚠️ Could not verify contract owner:', ownerError.message);
+        useDirectTransfer = true;
+      }
+    }
+
+    // Use direct wallet transfer (fallback or primary method)
+    if (useDirectTransfer) {
+      console.log('💸 Using direct wallet transfer from Treasury wallet...');
       
-      // Fallback to direct wallet transfer
-      console.log('💸 Falling back to direct wallet transfer...');
       const walletBalance = await provider.getBalance(treasuryWallet.address);
+      console.log(`💰 Treasury Wallet balance: ${ethers.formatEther(walletBalance)} MNT`);
       
       if (walletBalance < amountWei) {
         return NextResponse.json(
-          { error: `Treasury wallet has insufficient funds. Balance: ${ethers.formatEther(walletBalance)} MNT` },
+          { error: `Treasury wallet has insufficient funds. Wallet balance: ${ethers.formatEther(walletBalance)} MNT, Requested: ${amount} MNT` },
           { status: 400 }
         );
       }
       
+      console.log(`💸 Sending ${amount} MNT from ${treasuryWallet.address} to ${formattedUserAddress}...`);
       const tx = await treasuryWallet.sendTransaction({
         to: formattedUserAddress,
         value: amountWei,
       });
       
       console.log(`📤 Direct transfer sent: ${tx.hash}`);
-      
+      console.log(`✅ Withdraw MNT to ${formattedUserAddress}, TX: ${tx.hash}`);
+
       return new Response(JSON.stringify({
         success: true,
         transactionHash: tx.hash,
         amount: amount,
-        userAddress: userAddress,
+        userAddress: formattedUserAddress,
+        toAddress: formattedUserAddress,
         treasuryAddress: treasuryWallet.address,
         status: 'pending',
-        message: 'Transaction sent via direct transfer.',
-        note: 'Used direct wallet transfer (contract call failed)'
+        message: 'Transaction sent successfully via direct wallet transfer. Check Mantle Explorer for confirmation.',
+        note: isContract ? 'Used direct wallet transfer (contract call unavailable)' : 'Used direct wallet transfer (no contract at treasury address)'
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
-    
-    const tx = await treasuryContract.emergencyWithdraw(
-      formattedUserAddress,
-      amountWei,
-      { gasLimit: gasEstimate * BigInt(120) / BigInt(100) } // Add 20% buffer
-    );
-
-    console.log(`📤 Transaction sent: ${tx.hash}`);
-    console.log(`✅ Withdraw MNT to ${userAddress}, TX: ${tx.hash}`);
-
-    return new Response(JSON.stringify({
-      success: true,
-      transactionHash: tx.hash,
-      amount: amount,
-      userAddress: userAddress,
-      treasuryAddress: treasuryWallet.address,
-      status: 'pending',
-      message: 'Transaction sent successfully. Check Mantle Explorer for confirmation.'
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
 
   } catch (error) {
     console.error('Withdraw API error:', error);
