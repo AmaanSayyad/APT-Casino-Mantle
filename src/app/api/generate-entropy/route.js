@@ -10,7 +10,7 @@ import { ethers } from 'ethers';
  * Network Separation:
  * - Entropy/VRF: Arbitrum Sepolia (this API) - Provably fair randomness
  * - Game Logging: Somnia Testnet - On-chain game result verification
- * - Deposits/Withdrawals: Somnia Testnet - STT token operations
+ * - Deposits/Withdrawals: Mantle Sepolia Testnet - MNT token operations
  * 
  * DO NOT migrate this API to Somnia Testnet!
  * Pyth Entropy is only available on Arbitrum Sepolia.
@@ -62,7 +62,7 @@ export async function POST(request) {
     console.log('✅ Default provider:', defaultProvider);
     
     let fee = await contract.getFee(defaultProvider);
-    console.log('✅ Fee for provider:', ethers.formatEther(fee), 'STT');
+    console.log('✅ Fee for provider:', ethers.formatEther(fee), 'MNT');
     
     // Let's try to call the contract with minimal data to see what happens
     console.log('🧪 Testing contract call with minimal parameters...');
@@ -83,7 +83,7 @@ export async function POST(request) {
     
     // Request random value from Pyth Entropy
     console.log('🔄 Requesting random value from Pyth Entropy...');
-    console.log('💰 Using fee:', ethers.formatEther(fee), 'STT');
+    console.log('💰 Using fee:', ethers.formatEther(fee), 'MNT');
     console.log('🏦 Wallet address:', wallet.address);
     
     // Check wallet balance first

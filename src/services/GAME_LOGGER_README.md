@@ -146,9 +146,9 @@ async function logGame() {
 ```typescript
 {
   gameType: 'ROULETTE' | 'MINES' | 'WHEEL' | 'PLINKO';
-  betAmount: string;  // in STT (e.g., "0.1")
+  betAmount: string;  // in MNT (e.g., "0.1")
   result: object;     // game-specific result data
-  payout: string;     // in STT (e.g., "0.5")
+  payout: string;     // in MNT (e.g., "0.5")
   entropyProof?: {
     requestId: string;
     transactionHash: string;
@@ -347,10 +347,10 @@ console.log('Contract stats:', stats);
 **Solution**: Use one of: 'ROULETTE', 'MINES', 'WHEEL', 'PLINKO' (uppercase).
 
 ### Issue: "Transaction failed"
-**Solution**: Check wallet has sufficient STT for gas fees.
+**Solution**: Check wallet has sufficient MNT for gas fees.
 
 ### Issue: "Failed to get game history"
-**Solution**: Ensure contract address is correct and network is Somnia Testnet.
+**Solution**: Ensure contract address is correct and network is Mantle Sepolia Testnet.
 
 ## Best Practices
 

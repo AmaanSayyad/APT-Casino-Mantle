@@ -113,9 +113,9 @@ export const TOKEN_CONFIG = {
     decimals: 18,
     type: "native"
   },
-  STT: {
-    name: "Somnia Testnet Token",
-    symbol: "STT",
+  MNT: {
+    name: "Mantle Token",
+    symbol: "MNT",
     decimals: 18,
     type: "native"
   },
@@ -152,7 +152,7 @@ export const NETWORK_INFO = {
   [SOMNIA_NETWORKS.TESTNET]: {
     name: "Somnia Testnet",
     chainId: 50312,
-    nativeCurrency: TOKEN_CONFIG.STT,
+    nativeCurrency: TOKEN_CONFIG.MNT,
     explorer: SOMNIA_EXPLORER_URLS[SOMNIA_NETWORKS.TESTNET]
   },
   [MANTLE_NETWORKS.SEPOLIA]: {

@@ -77,7 +77,7 @@ const BettingHistory = ({ history }) => {
                 {bet.type}
               </Typography>
               <Typography variant="body1" color="text.primary">
-                {bet.amount} STT
+                {bet.amount} MNT
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {new Date(bet.timestamp).toLocaleTimeString()}
@@ -89,7 +89,7 @@ const BettingHistory = ({ history }) => {
                 fontWeight="bold"
                 color={bet.won ? 'success.main' : 'error.main'}
               >
-                {bet.won ? '+' : '-'}{bet.payout} STT
+                {bet.won ? '+' : '-'}{bet.payout} MNT
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mt: 0.5 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ mr: 1 }}>
