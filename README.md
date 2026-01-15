@@ -720,7 +720,7 @@ apt-casino/
 
 ## 🔗 Links & Resources
 - **Pitch Deck:** https://www.figma.com/deck/IXhYKDuxDTdzGQsMs9KS4L/APT-Casino-Mantle
-- **Demo Video:** 
-- **Pitch Video:**
+- **Demo Video:** https://youtu.be/sRtoSNNIZ-A
+- **Pitch Video:** https://youtu.be/M4Lpnx1RDHg
 - **Live Website:** https://apt-casino-mantle-sigma.vercel.app/
 - **Github:** https://github.com/AmaanSayyad/APT-Casino-Mantle
