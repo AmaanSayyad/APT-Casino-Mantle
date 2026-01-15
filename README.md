@@ -11,9 +11,6 @@ I was very annoyed of that's how Apt-Casino was born, gamblefi all in one platfo
 The traditional online gambling industry suffers from several issues:
 
 - **Unfair Game Outcomes**: 99% of platforms manipulate game results, leading to unfair play
-
-<img src="https://github.com/user-attachments/assets/6880e1cb-769c-4272-8b66-686a90abf3be"/>
-
 - **High Fees**: Exorbitant charges for deposits, withdrawals, and gameplay
 - **Restrictive Withdrawal Policies**: Conditions that prevent users from accessing their funds
 - **Misleading Bonus Schemes**: Trapping users with unrealistic wagering requirements
@@ -24,8 +21,10 @@ The traditional online gambling industry suffers from several issues:
 ## 💡 Our Solution
 
 APT Casino addresses these problems by offering:
-
 - **Provably Fair Gaming**: All game outcomes are verifiably fair on-chain, not only by its developers but can be verified by the gambler themselves.
+
+![commit_and_reveal](https://github.com/user-attachments/assets/cbb150e8-7d22-4903-9729-8ad00c20f1d5)
+
 - **Multiple Games**: Wheel, Roulette, Plinko, and Mines with verifiable outcomes
 - **MetaMask Smart Accounts**: Enhanced wallet experience with batch transactions
 - **Flexible Withdrawal**: Unrestricted access to funds
@@ -147,79 +146,6 @@ const executeBatchBets = async (bets) => {
     }))
   });
 };
-```
-
-## 🏗 System Architecture Overview
-
-```mermaid
-graph TB
-    subgraph Frontend["Frontend Layer"]
-        A[Next.js App] --> B[React Components]
-        B --> C[Three.js Games]
-        B --> D[Material-UI]
-        B --> E[RainbowKit + MetaMask Smart Accounts]
-        E --> SA[Smart Account Detection]
-        B --> LS[Livepeer Streaming]
-        B --> CC[Community Chat]
-    end
-    
-    subgraph State["State Management"]
-        F[Redux Store] --> G[React Query]
-        G --> H[Local State]
-        H --> SAH[Smart Account Hook]
-    end
-    
-    subgraph API["API Layer"]
-        I[Next.js API Routes] --> J[Pyth Entropy Endpoints]
-        I --> K[Deposit/Withdraw MNT]
-        I --> L[Game Logic]
-        I --> SAA[Smart Account API]
-        I --> SC[Socket.IO Chat]
-        I --> LP[Livepeer API]
-    end
-    
-    subgraph Gaming["Gaming Network - Mantle Sepolia"]
-        MT[Mantle Sepolia] --> MNT[MNT Token]
-        MT --> DEP[Deposits/Withdrawals]
-        MT --> SA_BATCH[Batch Transactions]
-        MT --> GAS[Gasless Transactions]
-    end
-    
-    subgraph Entropy["Entropy Network - Arbitrum Sepolia"]
-        AS[Arbitrum Sepolia] --> N[CasinoEntropyConsumer]
-        N --> O[Pyth Entropy]
-        O --> P[Pyth Network]
-    end
-    
-    subgraph Data["Data Layer"]
-        Q[PostgreSQL] --> R[User Data]
-        Q --> CH[Chat History]
-        Q --> PF[Player Profiles]
-        S[Redis Cache] --> T[Session Data]
-        S --> U[Game State]
-        S --> SAC[Smart Account Cache]
-        S --> LV[Live Streams]
-    end
-    
-    subgraph Social["Social Layer"]
-        LP[Livepeer] --> ST[Streaming]
-        SB[Supabase] --> RT[Real-time Chat]
-        SIO[Socket.IO] --> MS[Message Signing]
-    end
-    
-    A --> F
-    B --> I
-    I --> MT
-    I --> AS
-    I --> Q
-    I --> S
-    N --> I
-    SA --> SAA
-    CC --> SC
-    LS --> LP
-    SC --> SB
-    SC --> SIO
-    LP --> ST
 ```
 
 ## 🔗 Wallet Connection & Smart Account Flow
@@ -440,53 +366,6 @@ sequenceDiagram
     end
 ```
 
-## 🎯 Smart Account Gaming Benefits
-
-```mermaid
-graph TB
-    subgraph Traditional["Traditional EOA Gaming"]
-        EOA[EOA Account] --> ST[Single Transactions]
-        ST --> MF[Manual Confirmations]
-        MF --> HG[Higher Gas Costs]
-        HG --> SG[Slower Gaming]
-    end
-    
-    subgraph SmartAccount["Smart Account Gaming"]
-        SA[Smart Account] --> BT[Batch Transactions]
-        SA --> SP[Sponsored Transactions]
-        SA --> SK[Session Keys]
-        SA --> SR[Social Recovery]
-        
-        BT --> MB[Multi-Bet in One TX]
-        SP --> GL[Gasless Gaming]
-        SK --> AP[Auto-Play Sessions]
-        SR --> AS[Account Security]
-    end
-    
-    subgraph CasinoGames["Casino Game Benefits"]
-        MB --> PL[Plinko: Multi-Ball Drop]
-        MB --> RT[Roulette: Multi-Number Bets]
-        MB --> WH[Wheel: Continuous Play]
-        MB --> MN[Mines: Pattern Betting]
-        
-        GL --> FP[Free Play Mode]
-        AP --> ST_AUTO[Strategy Automation]
-        AS --> RF[Risk-Free Recovery]
-    end
-    
-    subgraph UserExperience["Enhanced UX"]
-        PL --> FG[Faster Gaming]
-        RT --> LG[Lower Costs]
-        WH --> BG[Better Strategies]
-        MN --> EG[Enhanced Security]
-        
-        FG --> HS[Higher Satisfaction]
-        LG --> HS
-        BG --> HS
-        EG --> HS
-    end
-```
-
 ## 🔄 Smart Account Transaction Flow
 
 ```mermaid
@@ -522,31 +401,6 @@ sequenceDiagram
     UI->>U: Display All Results
     
     Note over U,PE: Single transaction for multiple games!
-```
-
-
-## 🎯 Game Integration with Smart Accounts & Pyth Entropy
-
-```mermaid
-flowchart TD
-    A[User Selects Game] --> B{Smart Account?}
-    B -->|Yes| C[Enable Batch Features]
-    B -->|No| D[Standard Gaming]
-    
-    C --> E[Prepare Multiple Bets]
-    D --> F[Single Bet]
-    
-    E --> G[Batch Transaction]
-    F --> H[Standard Transaction]
-    
-    G --> I[Pyth Entropy Request]
-    H --> I
-    
-    I --> J[Generate Verifiable Random Numbers]
-    J --> K[Process Game Outcomes]
-    
-    K --> L[Update Balances]
-    L --> M[Display Results]
 ```
 
 ## 🔮 Future Roadmap
