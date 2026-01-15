@@ -372,10 +372,23 @@ export default function Navbar() {
         return;
       }
 
+      // Validate address format
+      let userAddress = address;
+      if (typeof address !== 'string') {
+        console.error('Invalid address type:', typeof address, address);
+        throw new Error('Invalid wallet address format. Please reconnect your wallet.');
+      }
+
+      // Ensure address is a valid Ethereum address
+      if (!/^0x[a-fA-F0-9]{40}$/.test(userAddress)) {
+        console.error('Invalid address format:', userAddress);
+        throw new Error('Invalid wallet address format. Please reconnect your wallet.');
+      }
+
       // Call backend API to process withdrawal from treasury
-      console.log('🔍 Account object:', address);
-      console.log('🔍 Account address:', address);
-      console.log('🔍 Account address type:', typeof address);
+      console.log('🔍 Account address:', userAddress);
+      console.log('🔍 Account address type:', typeof userAddress);
+      console.log('🔍 Withdrawal amount:', balanceInMnt);
       
       const response = await fetch('/api/withdraw', {
         method: 'POST',
@@ -383,7 +396,7 @@ export default function Navbar() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userAddress: address,
+          userAddress: userAddress,
           amount: balanceInMnt
         })
       });

@@ -92,7 +92,7 @@ export async function POST(request) {
       );
     }
 
-    // Format user address
+    // Format and validate user address
     let formattedUserAddress;
     if (typeof userAddress === 'object' && userAddress.data) {
       const bytes = Object.values(userAddress.data);
@@ -103,7 +103,26 @@ export async function POST(request) {
       throw new Error(`Invalid userAddress format: ${typeof userAddress}`);
     }
 
+    // Validate and checksum the address using ethers
+    try {
+      formattedUserAddress = ethers.getAddress(formattedUserAddress);
+    } catch (addressError) {
+      throw new Error(`Invalid Ethereum address: ${formattedUserAddress}. Error: ${addressError.message}`);
+    }
+
+    // CRITICAL: Ensure user address is not the treasury address
+    if (formattedUserAddress.toLowerCase() === TREASURY_CONTRACT_ADDRESS.toLowerCase()) {
+      throw new Error('Cannot withdraw to treasury contract address. Please use your connected wallet address.');
+    }
+
+    // CRITICAL: Ensure user address is not the treasury wallet address
+    if (formattedUserAddress.toLowerCase() === treasuryWallet.address.toLowerCase()) {
+      throw new Error('Cannot withdraw to treasury wallet address. Please use your connected wallet address.');
+    }
+
     console.log('🔧 Formatted user address:', formattedUserAddress);
+    console.log('🔧 Treasury contract address:', TREASURY_CONTRACT_ADDRESS);
+    console.log('🔧 Treasury wallet address:', treasuryWallet.address);
     console.log('🔧 Amount in Wei:', amountWei.toString());
 
     // Create Treasury Contract instance

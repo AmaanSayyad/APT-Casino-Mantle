@@ -87,6 +87,19 @@ const WithdrawModal = ({ isOpen, onClose }) => {
     try {
       const amount = parseFloat(withdrawAmount);
       
+      // Validate address
+      if (!account || typeof account !== 'string') {
+        throw new Error('Invalid wallet address. Please reconnect your wallet.');
+      }
+      
+      // Ensure address is a valid Ethereum address
+      if (!/^0x[a-fA-F0-9]{40}$/.test(account)) {
+        throw new Error('Invalid wallet address format. Please reconnect your wallet.');
+      }
+      
+      console.log('🔍 Withdrawing to address:', account);
+      console.log('🔍 Withdrawal amount:', amount);
+      
       // Call backend API to process withdrawal from treasury
       const response = await fetch('/api/withdraw', {
         method: 'POST',
@@ -94,7 +107,7 @@ const WithdrawModal = ({ isOpen, onClose }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userAddress: account.address,
+          userAddress: account,
           amount: amount
         })
       });
@@ -214,7 +227,7 @@ const WithdrawModal = ({ isOpen, onClose }) => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">To Wallet:</span>
-                <span className="text-white font-mono text-sm">{account?.address?.slice(0, 6)}...{account?.address?.slice(-4)}</span>
+                <span className="text-white font-mono text-sm">{account?.slice(0, 6)}...{account?.slice(-4)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Network Fee:</span>
@@ -282,7 +295,7 @@ const WithdrawModal = ({ isOpen, onClose }) => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">To Wallet:</span>
-                <span className="text-white font-mono text-sm">{account?.address?.slice(0, 6)}...{account?.address?.slice(-4)}</span>
+                <span className="text-white font-mono text-sm">{account?.slice(0, 6)}...{account?.slice(-4)}</span>
               </div>
             </div>
             
